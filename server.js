@@ -14,7 +14,7 @@ const request = require("request"),
 app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
 
 // Accepts POST requests at /webhook endpoint
-app.post("/webhook", (req, res) => {
+app.post("/webhook", async (req, res) => {
   // Parse the request body from the POST
   let body = req.body;
 
@@ -36,7 +36,7 @@ app.post("/webhook", (req, res) => {
       let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
 
       console.log("SEDNING MESSAGE TO: " + from);
-      axios({
+      const result  = await axios({
         method: "POST", // Required, HTTP method, a string, e.g. POST, GET
         url:
           "https://graph.facebook.com/v12.0/" +
@@ -51,6 +51,7 @@ app.post("/webhook", (req, res) => {
         headers: { "Content-Type": "application/json" },
       });
     }
+    console.log(result);
     res.sendStatus(200);
   } else {
     // Return a '404 Not Found' if event is not from a WhatsApp API
