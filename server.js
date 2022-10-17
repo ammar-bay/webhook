@@ -36,22 +36,27 @@ app.post("/webhook", async (req, res) => {
       let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
 
       console.log("SEDNING MESSAGE TO: " + from);
-      const result  = await axios({
-        method: "POST", // Required, HTTP method, a string, e.g. POST, GET
-        url:
-          "https://graph.facebook.com/v12.0/" +
-          phone_number_id +
-          "/messages?access_token=" +
-          token,
-        data: {
-          messaging_product: "whatsapp",
-          to: from,
-          text: { body: "Ack: " + msg_body },
-        },
-        headers: { "Content-Type": "application/json" },
-      });
+      try {
+        const result = await axios({
+          method: "POST", // Required, HTTP method, a string, e.g. POST, GET
+          url:
+            "https://graph.facebook.com/v12.0/" +
+            phone_number_id +
+            "/messages?access_token=" +
+            token,
+          data: {
+            messaging_product: "whatsapp",
+            to: from,
+            text: { body: "Ack: " + msg_body },
+          },
+          headers: { "Content-Type": "application/json" },
+        });
+        console.log(result);
+      } catch (error) {
+        console.log(error);
+      }
     }
-    console.log(result);
+
     res.sendStatus(200);
   } else {
     // Return a '404 Not Found' if event is not from a WhatsApp API
