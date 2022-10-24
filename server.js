@@ -11,7 +11,7 @@ const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
 const router = express.Router();
 const path = require("path");
-const PORT = process.env.PORT || 8800;
+const PORT = process.env.PORT || 8900;
 
 dotenv.config();
 
@@ -48,7 +48,7 @@ app.use("/api/users", userRoute);
 // app.use("/api/posts", postRoute);
 app.use("/api/conversations", conversationRoute(io));
 app.use("/api/messages", messageRoute);
-app.use("/webhooks", webhookRoute);
+app.use("/webhook", webhookRoute);
 
 server.listen(PORT, () => {
   console.log("Backend server is running!");
