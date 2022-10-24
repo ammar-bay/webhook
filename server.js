@@ -9,8 +9,8 @@ const postRoute = require("./routes/posts");
 const webhookRoute = require("./routes/webhook");
 const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
-const router = express.Router();
-const path = require("path");
+// const router = express.Router();
+// const path = require("path");
 const PORT = process.env.PORT || 8900;
 
 dotenv.config();
@@ -45,7 +45,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
-// app.use("/api/posts", postRoute);
+app.use("/api/posts", postRoute);
 app.use("/api/conversations", conversationRoute(io));
 app.use("/api/messages", messageRoute);
 app.use("/webhook", webhookRoute);
