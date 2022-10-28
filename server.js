@@ -25,6 +25,18 @@ const io = require("socket.io")(server, {
 
 io.on("connection", (socket) => {
   console.log(socket.id);
+
+    //send and get message
+    socket.on("sendMessage", ({ senderId, text }) => {
+      // socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+      // const user = getUser(receiverId);
+      // io.to(user.socketId).emit("getMessage", {
+      io.emit("getMessage", {
+        senderId,
+        text,
+      });
+    });
+
   socket.on("disconnect", () => {
     console.log("a user disconnected!");
     // io.emit("getUsers", users);
