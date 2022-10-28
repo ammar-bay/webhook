@@ -1,0 +1,39 @@
+{
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "106505345574116",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "15550712684",
+                            "phone_number_id": "105677815657877"
+                        },
+                        "contacts": [
+                            {
+                                "profile": {
+                                    "name": "Ammar Ibrahim"
+                                },
+                                "wa_id": "923036547188"
+                            }
+                        ],
+                        "messages": [
+                            {
+                                "from": "923036547188",
+                                "id": "wamid.HBgMOTIzMDM2NTQ3MTg4FQIAEhgUM0VCMEU3MjY5MDE5QjYwM0M2NDEA",
+                                "timestamp": "1666997481",
+                                "text": {
+                                    "body": "5"
+                                },
+                                "type": "text"
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}

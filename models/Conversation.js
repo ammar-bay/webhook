@@ -6,12 +6,16 @@ const ConversationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    lastmessage: {
+    name: {
       type: String,
+      required: true,
     },
-    lastmessagetime: {
-      type: String,
-    },
+    // lastmessage: {
+    //   type: String,
+    // },
+    // lastmessagetime: {
+    //   type: String,
+    // },
     members: {
       type: Array,
     },

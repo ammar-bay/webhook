@@ -1,7 +1,8 @@
 const axios = require("axios");
+const Message = require("../models/Message");
+const Conversation = require("../models/Conversation");
 
 const WhatsappWebhookRouter = (io) => {
-
   const router = require("express").Router();
 
   router.post("/", async (req, res) => {
@@ -12,12 +13,42 @@ const WhatsappWebhookRouter = (io) => {
     // console.log(JSON.stringify(req.body, null, 2));
     // check type of incoming the incoming request
     // Message request
-    if(req.body.entry[0]?.changes[0]?.value?.messages){
+    if (req.body.entry[0]?.changes[0]?.value?.messages) {
       console.log("Message request");
       io.emit("waMessage", req.body);
-    } 
+      
+      const value = req.body.entry[0]?.changes[0]?.value;
+
+      const message = {
+        coversationId: value.contacts.wa_id,
+        senderId: value.contacts.wa_id,
+        senderName: value.contacts.profile.name,
+        text: value.messages?.text.body,
+      };
+      try {
+        Message.create(message);
+        // const newMessage = await Message.create(message);
+      } catch (error) {
+        console.log(error);
+      }
+      try {
+        const res = await Conversation.exists({ id: value.contacts.wa_id });
+        if (!res) {
+          const conversation = {
+            id: value.contacts.wa_id,
+            name: value.contacts.profile.name,
+            // lastmessage: value.messages?.text.body,
+            // lastmessagetime: Date.now()
+          };
+          Conversation.create(conversation);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+    }
     // Message status request
-    else{
+    else {
       console.log("Message status request");
     }
 
