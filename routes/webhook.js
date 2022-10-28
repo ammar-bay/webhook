@@ -16,14 +16,15 @@ const WhatsappWebhookRouter = (io) => {
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
       console.log("Message request");
       io.emit("waMessage", req.body);
-      
-      const value = req.body.entry[0]?.changes[0]?.value;
+
+      const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
+      const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
 
       const message = {
-        coversationId: value.contacts.wa_id,
-        senderId: value.contacts.wa_id,
-        senderName: value.contacts.profile.name,
-        text: value.messages?.text.body,
+        coversationId: contacts.wa_id,
+        senderId: contacts.wa_id,
+        senderName: contacts.profile.name,
+        text: messages?.text.body,
       };
       try {
         Message.create(message);
@@ -32,11 +33,11 @@ const WhatsappWebhookRouter = (io) => {
         console.log(error);
       }
       try {
-        const res = await Conversation.exists({ id: value.contacts.wa_id });
+        const res = await Conversation.exists({ id: contacts.wa_id });
         if (!res) {
           const conversation = {
-            id: value.contacts.wa_id,
-            name: value.contacts.profile.name,
+            id: contacts.wa_id,
+            name: contacts.profile.name,
             // lastmessage: value.messages?.text.body,
             // lastmessagetime: Date.now()
           };
@@ -45,7 +46,6 @@ const WhatsappWebhookRouter = (io) => {
       } catch (error) {
         console.log(error);
       }
-
     }
     // Message status request
     else {
