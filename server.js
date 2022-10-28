@@ -10,8 +10,8 @@ const webhookRoute = require("./routes/webhook");
 const fbpagewebhookRoute = require("./routes/fbpagewebhook");
 const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
-// const router = express.Router();
-// const path = require("path");
+
+
 const PORT = process.env.PORT || 8900;
 
 dotenv.config();
@@ -47,10 +47,10 @@ app.use(express.json());
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
-app.use("/api/conversations", conversationRoute(io));
 app.use("/api/messages", messageRoute);
-app.use("/webhook", webhookRoute);
-app.use("/fbpage", fbpagewebhookRoute);
+app.use("/api/conversations", conversationRoute(io));
+app.use("/webhook", webhookRoute(io));
+app.use("/fbpage", fbpagewebhookRoute(io));
 
 server.listen(PORT, () => {
   console.log("Backend server is running!");
