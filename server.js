@@ -6,9 +6,9 @@ const dotenv = require("dotenv");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
+const conversationRoute = require("./routes/conversations");
 const webhookRoute = require("./routes/webhook");
 const fbpagewebhookRoute = require("./routes/fbpagewebhook");
-const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
 
 
@@ -49,6 +49,8 @@ app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/conversations", conversationRoute(io));
+
+// webhooks
 app.use("/webhook", webhookRoute(io));
 app.use("/fbpage", fbpagewebhookRoute(io));
 

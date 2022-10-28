@@ -1,7 +1,9 @@
-const router = require("express").Router();
 const axios = require("axios");
 
 const WhatsappWebhookRouter = (io) => {
+
+  const router = require("express").Router();
+
   router.post("/", async (req, res) => {
     // Parse the request body from the POST
     //   let body = req.body;
@@ -79,5 +81,6 @@ const WhatsappWebhookRouter = (io) => {
       }
     }
   });
+  return router;
 };
 module.exports = WhatsappWebhookRouter;

@@ -1,7 +1,8 @@
-const router = require("express").Router();
 const axios = require("axios");
 
 const FacebookWebhookRouter = (io) => {
+
+  const router = require("express").Router();
   router.post("/", async (req, res) => {
     // Parse the request body from the POST
     //   let body = req.body;
@@ -78,5 +79,6 @@ const FacebookWebhookRouter = (io) => {
       }
     }
   });
+  return router;
 };
 module.exports = FacebookWebhookRouter;
