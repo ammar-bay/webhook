@@ -3,6 +3,7 @@ const app = express();
 const server = require("http").createServer(app);
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
@@ -42,6 +43,8 @@ mongoose.connect(
 app.set("view engine", "ejs");
 app.set(express.urlencoded({ extended: false }));
 app.use(express.json());
+// app.use(cors(corsOptions));
+app.use(cors());
 
 // Routes
 app.use("/api/auth", authRoute);
