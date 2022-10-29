@@ -22,8 +22,8 @@ const ConversationRouter = (io) => {
   router.get("/", async (req, res) => {
     try {
       const conversation = await Conversation.find();
-      console.log(conversation);
-      // res.status(200).json(conversation);
+      // console.log(conversation);
+      res.status(200).json(conversation);
     } catch (err) {
       res.status(500).json(err);
     }
