@@ -11,6 +11,8 @@ const conversationRoute = require("./routes/conversations");
 const webhookRoute = require("./routes/webhook");
 const fbpagewebhookRoute = require("./routes/fbpagewebhook");
 const messageRoute = require("./routes/messages");
+const credentials = require("./middleware/credentials");
+const corsOptions = require("./config/corsOptions");
 
 
 const PORT = process.env.PORT || 8900;
@@ -57,7 +59,8 @@ app.set("view engine", "ejs");
 app.set(express.urlencoded({ extended: false }));
 app.use(express.json());
 // app.use(cors(corsOptions));
-app.use(cors());
+app.use(credentials)
+app.use(cors(corsOptions));
 
 // Routes
 app.use("/auth", authRoute);

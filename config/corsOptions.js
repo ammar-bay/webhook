@@ -1,4 +1,4 @@
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
+const allowedOrigins = require('./allowedOrigins');
 
 const corsOptions = {
   origin: (origin, callback) => {
