@@ -21,7 +21,7 @@ const WhatsappWebhookRouter = (io) => {
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
 
       const message = {
-        coversationId: contacts.wa_id,
+        conversationId: contacts.wa_id,
         senderId: contacts.wa_id,
         senderName: contacts.profile.name,
         text: messages?.text.body,
