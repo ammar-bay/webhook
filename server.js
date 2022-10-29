@@ -60,11 +60,11 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-app.use("/api/auth", authRoute);
-app.use("/api/users", userRoute);
-app.use("/api/posts", postRoute);
-app.use("/api/messages", messageRoute);
-app.use("/api/conversations", conversationRoute(io));
+app.use("/auth", authRoute);
+app.use("/users", userRoute);
+app.use("/posts", postRoute);
+app.use("/messages", messageRoute);
+app.use("/conversations", conversationRoute(io));
 
 // webhooks
 app.use("/webhook", webhookRoute(io));
