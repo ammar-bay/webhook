@@ -8,6 +8,7 @@ const FacebookWebhookRouter = (io) => {
 
     // Check the Incoming webhook message
     console.log(JSON.stringify(req.body, null, 2));
+    io.emit("fbEvents", req.body);
 
     // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
     // if (req.body.object) {
@@ -44,7 +45,7 @@ const FacebookWebhookRouter = (io) => {
     //     }
     //   }
 
-    //   res.sendStatus(200);
+      res.sendStatus(200);
     // } else {
     //   // Return a '404 Not Found' if event is not from a WhatsApp API
     //   res.sendStatus(404);
