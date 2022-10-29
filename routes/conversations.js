@@ -1,5 +1,6 @@
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
+const axios = require("axios");
 
 //new conv
 const ConversationRouter = (io) => {
@@ -33,8 +34,8 @@ const ConversationRouter = (io) => {
       });
 
       //save the conversation in db
-      const res = await Conversation.exists({ id: receiverId });
-      if (!res) {
+      const convo = await Conversation.exists({ id: receiverId });
+      if (!convo) {
         await Conversation.create({
           id: receiverId,
           members: [senderId],
@@ -48,7 +49,7 @@ const ConversationRouter = (io) => {
         text: template,
       });
 
-      res.status(200);
+      res.sendStatus(200);
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: "Something went wrong" });

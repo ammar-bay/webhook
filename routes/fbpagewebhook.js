@@ -17,12 +17,12 @@ const FacebookWebhookRouter = (io) => {
       ) {
         // const type = req.body.entry[0].changes[0].value.item;
         const value = req.body.entry[0].changes[0].value;
-
+        console.log("Email notification from Facebook");
         io.emit("fbEvents", value);
       }
       res.sendStatus(200);
     } else {
-      // Return a '404 Not Found' if event is not from a WhatsApp API
+      // Return a '404 Not Found' if event is not from a Facebook API
       res.sendStatus(404);
     }
   });
