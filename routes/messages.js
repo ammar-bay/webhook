@@ -23,7 +23,6 @@ router.post("/", async (req, res) => {
     const result = await axios.post(url, body, {
       headers: { Authorization: token, "Content-Type": "application/json" },
     });
-    console.log(result.data);
     const newMessage = new Message(req.body);
     try {
       const savedMessage = await newMessage.save();
@@ -32,7 +31,6 @@ router.post("/", async (req, res) => {
       res.status(500).json(err);
     }
   } catch (error) {
-    console.log("inside the catch block");
     console.log(error);
     res.status(500).json({ error: "Something went wrong" });
   }

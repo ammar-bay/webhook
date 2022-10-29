@@ -12,17 +12,19 @@ const WhatsappWebhookRouter = (io) => {
     // Message request
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
       console.log("Message request");
-      io.emit("waMessage", req.body.entry[0]?.changes[0]?.value);
-
+      
       const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
-
+      
       const message = {
         conversationId: contacts.wa_id,
         senderId: contacts.wa_id,
         senderName: contacts.profile.name,
         text: messages?.text.body,
       };
+
+      io.emit("waMessage", message);
+      
       try {
         Message.create(message);
         const res = await Conversation.exists({ id: contacts.wa_id });
@@ -92,7 +94,6 @@ const WhatsappWebhookRouter = (io) => {
      *This will be the Verify Token value when you set up webhook
      **/
     const verify_token = process.env.VERIFY_TOKEN;
-    console.log(req.body);
     // Parse params from the webhook verification request
     let mode = req.query["hub.mode"];
     let token = req.query["hub.verify_token"];
