@@ -1,4 +1,5 @@
 const Conversation = require("../models/Conversation");
+const Message = require("../models/Message");
 
 //new conv
 const ConversationRouter = (io) => {
@@ -17,12 +18,47 @@ const ConversationRouter = (io) => {
   //   }
   // });
 
-  //get conv of a user
+  //Operator initiated chat with customer on WhatsApp message will be a template message
+  router.post("/initiate", async (req, res) => {
+    const { receiverId, template, senderId, senderName } = req.body;
+    const url = `https://graph.facebook.com/v14.0/105677815657877/messages`;
+    const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
+    const body = `{ "messaging_product": "whatsapp", "to": ${receiverId}, "type": "template", "template": { "name": "${template}", "language": { "code": "en_US" } } }`;
 
+    // can use promise.all here
+    try {
+      //send the (template) message to customer
+      const result = await axios.post(url, body, {
+        headers: { Authorization: token, "Content-Type": "application/json" },
+      });
+
+      //save the conversation in db
+      const res = await Conversation.exists({ id: receiverId });
+      if (!res) {
+        await Conversation.create({
+          id: receiverId,
+          members: [senderId],
+        });
+      }
+
+      const messages = await Message.create({
+        conversationId: receiverId,
+        senderId,
+        senderName,
+        text: template,
+      });
+
+      res.status(200);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Something went wrong" });
+    }
+  });
+
+  //get conv of a user
   router.get("/", async (req, res) => {
     try {
       const conversation = await Conversation.find();
-      // console.log(conversation);
       res.status(200).json(conversation);
     } catch (err) {
       res.status(500).json(err);
@@ -30,17 +66,16 @@ const ConversationRouter = (io) => {
   });
 
   // get conv includes two userId
-
-  router.get("/find/:firstUserId/:secondUserId", async (req, res) => {
-    try {
-      const conversation = await Conversation.findOne({
-        members: { $all: [req.params.firstUserId, req.params.secondUserId] },
-      });
-      res.status(200).json(conversation);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  });
+  // router.get("/find/:firstUserId/:secondUserId", async (req, res) => {
+  //   try {
+  //     const conversation = await Conversation.findOne({
+  //       members: { $all: [req.params.firstUserId, req.params.secondUserId] },
+  //     });
+  //     res.status(200).json(conversation);
+  //   } catch (err) {
+  //     res.status(500).json(err);
+  //   }
+  // });
   return router;
 };
 module.exports = ConversationRouter;

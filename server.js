@@ -4,6 +4,7 @@ const server = require("http").createServer(app);
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const axios = require("axios");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
@@ -26,22 +27,25 @@ const io = require("socket.io")(server, {
 
 io.on("connection", (socket) => {
   console.log(socket.id);
+  const url = `https://graph.facebook.com/v14.0/105677815657877/messages`;
+  const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
 
-  //send and get message
-  socket.on("sendMessage", ({ senderId, text }) => {
-    console.log(senderId, text);
-    // socket.on("sendMessage", ({ senderId, receiverId, text }) => {
-    // const user = getUser(receiverId);
-    // io.to(user.socketId).emit("getMessage", {
-    io.emit("waMessage", {
+  //Operator replies to a message
+  socket.on("sendMessage", async ({ senderId, receiverId, text }) => {
+    // event for other operators to get this reply except the sender
+    socket.broadcast.emit("oMessage", {
       senderId,
+      receiverId,
       text,
     });
   });
 
+  socket.on("ioMessage", (message) => {
+    socket.broadcast.emit("ioMessage", message);
+  });
+
   socket.on("disconnect", () => {
     console.log("a user disconnected!");
-    // io.emit("getUsers", users);
   });
 });
 

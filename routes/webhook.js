@@ -6,16 +6,13 @@ const WhatsappWebhookRouter = (io) => {
   const router = require("express").Router();
 
   router.post("/", async (req, res) => {
-    // Parse the request body from the POST
-    //   let body = req.body;
-
     // Check the Incoming webhook message
     // console.log(JSON.stringify(req.body, null, 2));
     // check type of incoming the incoming request
     // Message request
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
       console.log("Message request");
-      io.emit("waMessage", req.body);
+      io.emit("waMessage", req.body.entry[0]?.changes[0]?.value);
 
       const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
@@ -28,18 +25,11 @@ const WhatsappWebhookRouter = (io) => {
       };
       try {
         Message.create(message);
-        // const newMessage = await Message.create(message);
-      } catch (error) {
-        console.log(error);
-      }
-      try {
         const res = await Conversation.exists({ id: contacts.wa_id });
         if (!res) {
           const conversation = {
             id: contacts.wa_id,
             name: contacts.profile.name,
-            // lastmessage: value.messages?.text.body,
-            // lastmessagetime: Date.now()
           };
           Conversation.create(conversation);
         }
