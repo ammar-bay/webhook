@@ -7,6 +7,7 @@ router.post("/", async (req, res) => {
   const { senderId, receiverId, text } = req.body;
   const url = `https://graph.facebook.com/v14.0/105677815657877/messages`;
   const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
+  console.log(token);
 
   // send this message to the receiverId that is the number of the customer
   const body = `

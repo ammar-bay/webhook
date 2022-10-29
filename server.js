@@ -31,13 +31,9 @@ io.on("connection", (socket) => {
   const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
 
   //Operator replies to a message
-  socket.on("sendMessage", async ({ senderId, receiverId, text }) => {
+  socket.on("sendMessage", async (message) => {
     // event for other operators to get this reply except the sender
-    socket.broadcast.emit("oMessage", {
-      senderId,
-      receiverId,
-      text,
-    });
+    socket.broadcast.emit("oMessage", message);
   });
 
   socket.on("ioMessage", (message) => {
