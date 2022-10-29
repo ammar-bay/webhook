@@ -14,7 +14,6 @@ const messageRoute = require("./routes/messages");
 const credentials = require("./middleware/credentials");
 const corsOptions = require("./config/corsOptions");
 
-
 const PORT = process.env.PORT || 8900;
 
 dotenv.config();
@@ -28,17 +27,17 @@ const io = require("socket.io")(server, {
 io.on("connection", (socket) => {
   console.log(socket.id);
 
-    //send and get message
-    socket.on("sendMessage", ({ senderId, text }) => {
-      console.log(senderId, text);
-      // socket.on("sendMessage", ({ senderId, receiverId, text }) => {
-      // const user = getUser(receiverId);
-      // io.to(user.socketId).emit("getMessage", {
-      io.emit("waMessage", {
-        senderId,
-        text,
-      });
+  //send and get message
+  socket.on("sendMessage", ({ senderId, text }) => {
+    console.log(senderId, text);
+    // socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+    // const user = getUser(receiverId);
+    // io.to(user.socketId).emit("getMessage", {
+    io.emit("waMessage", {
+      senderId,
+      text,
     });
+  });
 
   socket.on("disconnect", () => {
     console.log("a user disconnected!");
@@ -58,9 +57,13 @@ mongoose.connect(
 app.set("view engine", "ejs");
 app.set(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
+app.use(cors());
+// app.use(credentials)
 // app.use(cors(corsOptions));
-app.use(credentials)
-app.use(cors(corsOptions));
 
 // Routes
 app.use("/auth", authRoute);
