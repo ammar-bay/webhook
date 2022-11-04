@@ -5,7 +5,7 @@ const axios = require("axios");
 // Operator replies to a message
 router.post("/", async (req, res) => {
   const { senderId, conversationId, text } = req.body;
-  const url = `https://graph.facebook.com/v14.0/105677815657877/messages`;
+  const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
   const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
 
   // send this message to the receiverId that is the number of the customer
