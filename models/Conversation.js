@@ -8,7 +8,7 @@ const ConversationSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: true,
+      // required: true,
     },
     // lastmessage: {
     //   type: String,
