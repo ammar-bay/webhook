@@ -24,8 +24,10 @@ router.get("/", async (req, res) => {
 });
 
 //update a notification
-router.put("/:id/reply", async (req, res) => {
+router.post("/:id/reply", async (req, res) => {
   try {
+    // console.log(req.body);
+    // console.log(req.params.id);
     const result = await axios.post(
       `https://graph.facebook.com/${req.params.id}/comments?access_token=${process.env.FB_ACCESS_TOKEN}`,
       {
