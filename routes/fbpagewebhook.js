@@ -24,6 +24,7 @@ const FacebookWebhookRouter = (io) => {
           const notify = await Notification.create(value);
           console.log(notify);
         } catch (error) {
+          console.log("Error in saving notification in db");
           console.log(error);
         }
       }

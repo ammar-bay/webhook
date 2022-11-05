@@ -1,13 +1,14 @@
 const router = require("express").Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
+const axios = require("axios");
 
 router.get("/", async (req, res) => {
   try {
-    const res = await axios.get(
+    const result = await axios.get(
       `https://graph.facebook.com/${process.env.FB_AL_NAFI_PAGE_ID}/posts?access_token=${process.env.FB_AL_NAFI_PAGE_ACCESS_TOKEN}`
     );
-    res.status(200).json(res.data);
+    res.status(200).json(result.data);
   } catch (err) {
     res.status(500).json(err);
   }
