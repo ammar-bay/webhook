@@ -21,6 +21,9 @@ const NotificationSchema = new mongoose.Schema(
     comment_id: {
       type: String,
     },
+    share_id: {
+      type: String,
+    },
     post_id: {
       type: String,
     },

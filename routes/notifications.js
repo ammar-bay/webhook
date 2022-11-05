@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const Notification = require("../models/Notification");
 // const User = require("../models/User");
+const axios = require("axios");
 
 //create a notification
 router.post("/", async (req, res) => {
@@ -25,13 +26,16 @@ router.get("/", async (req, res) => {
 
 //update a notification
 router.post("/:id/reply", async (req, res) => {
+
   try {
     const result = await axios.post(
-      `https://graph.facebook.com/${req.params.id}/comments?access_token=${process.env.FB_ACCESS_TOKEN}`,
+      `https://graph.facebook.com/${req.params.id}/comments?access_token=${process.env.FB_AL_NAFI_PAGE_ACCESS_TOKEN}`,
       {
-        message,
+        message: req.body.msg,
       }
     );
+    console.log("reply sent");
+    console.log(result.data);
     const notification = await Notification.findOneAndUpdate(
       { comment_id: req.params.id },
       {
@@ -48,8 +52,10 @@ router.post("/:id/reply", async (req, res) => {
         new: true,
       }
     );
+    console.log("notification updated", notification);
     res.status(200).json("the notification has been updated");
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
