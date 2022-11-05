@@ -21,7 +21,7 @@ const ConversationRouter = (io) => {
 
   //Operator initiated chat with customer on WhatsApp message will be a template message
   router.post("/initiate", async (req, res) => {
-    console.log("Initiate chat");
+    // console.log("Initiate chat");
     const { receiverId, template, senderId, senderName } = req.body;
     
     const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;

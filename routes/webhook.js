@@ -11,7 +11,7 @@ const WhatsappWebhookRouter = (io) => {
     // check type of incoming the incoming request
     // Message request
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
-      console.log("Message request");
+      // console.log("Message request");
       
       const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
@@ -41,7 +41,7 @@ const WhatsappWebhookRouter = (io) => {
     }
     // Message status request
     else {
-      console.log("Message status request");
+      // console.log("Message status request");
     }
 
     // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
@@ -57,7 +57,7 @@ const WhatsappWebhookRouter = (io) => {
           req.body.entry[0].changes[0].value.metadata.phone_number_id;
         let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
         let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
-        console.log("Sending axios post");
+        // console.log("Sending axios post");
         try {
           const result = await axios({
             method: "POST", // Required, HTTP method, a string, e.g. POST, GET
@@ -75,7 +75,7 @@ const WhatsappWebhookRouter = (io) => {
           });
         } catch (error) {
           console.log(error);
-          console.log("ERROR!!");
+          // console.log("ERROR!!");
         }
       }
 

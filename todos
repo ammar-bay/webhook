@@ -4,4 +4,14 @@ Whatsapp:
     add new message symbol to each new conversation
 
 Facebook:
-    
+    all cards should have checked/seen button
+    comments cards should have reply button and reply should be shown on that card
+
+
+if not login redirect to login
+change the prod database in mongo for now
+
+add authentication using aws
+change the prod database to AWS
+
+

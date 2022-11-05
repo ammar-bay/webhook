@@ -8,6 +8,7 @@ const axios = require("axios");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
+const notificationRoute = require("./routes/notifications");
 const conversationRoute = require("./routes/conversations");
 const webhookRoute = require("./routes/webhook");
 const fbpagewebhookRoute = require("./routes/fbpagewebhook");
@@ -70,6 +71,7 @@ app.use("/auth", authRoute);
 app.use("/users", userRoute);
 app.use("/posts", postRoute);
 app.use("/messages", messageRoute);
+app.use("/notifications", notificationRoute);
 app.use("/conversations", conversationRoute(io));
 
 // webhooks

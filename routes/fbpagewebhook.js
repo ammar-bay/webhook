@@ -1,4 +1,5 @@
 const axios = require("axios");
+const Notification = require("../models/Notification");
 
 const FacebookWebhookRouter = (io) => {
   const router = require("express").Router();
@@ -6,7 +7,7 @@ const FacebookWebhookRouter = (io) => {
   // getting notification from facebook
   router.post("/", async (req, res) => {
     // Check the Incoming webhook message
-    console.log(JSON.stringify(req.body, null, 2));
+    // console.log(JSON.stringify(req.body, null, 2));
 
     if (req.body.object === "page") {
       if (
@@ -17,8 +18,14 @@ const FacebookWebhookRouter = (io) => {
       ) {
         // const type = req.body.entry[0].changes[0].value.item;
         const value = req.body.entry[0].changes[0].value;
-        console.log("Email notification from Facebook");
+        console.log("Notification from Facebook Page Webhook");
         io.emit("fbEvents", value);
+        try {
+          const notify = await Notification.create(value);
+          console.log(notify);
+        } catch (error) {
+          console.log(error);
+        }
       }
       res.sendStatus(200);
     } else {
@@ -31,11 +38,11 @@ const FacebookWebhookRouter = (io) => {
   // info on verification request payload: https://developers.facebook.com/docs/graph-api/webhooks/getting-started#verification-requests
   router.get("/", (req, res) => {
     /**
-     * UPDATE YOUR VERIFY TOKEN
+     *UPDATE YOUR VERIFY TOKEN
      *This will be the Verify Token value when you set up webhook
      **/
     const verify_token = process.env.VERIFY_TOKEN;
-    console.log(req.body);
+    // console.log(req.body);
     // Parse params from the webhook verification request
     let mode = req.query["hub.mode"];
     let token = req.query["hub.verify_token"];

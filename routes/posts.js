@@ -2,8 +2,18 @@ const router = require("express").Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
 
-//create a post
+router.get("/", async (req, res) => {
+  try {
+    const res = await axios.get(
+      `https://graph.facebook.com/${process.env.FB_AL_NAFI_PAGE_ID}/posts?access_token=${process.env.FB_AL_NAFI_PAGE_ACCESS_TOKEN}`
+    );
+    res.status(200).json(res.data);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
+//create a post
 router.post("/", async (req, res) => {
   const newPost = new Post(req.body);
   try {
