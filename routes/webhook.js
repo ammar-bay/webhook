@@ -17,71 +17,56 @@ const WhatsappWebhookRouter = (io) => {
       const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
       console.log(messages);
-      console.log("Image: ", messages?.image?.id);
-      const id = messages?.image?.id;
-      // const url = `https://graph.facebook.com/v14.0/${id}`;
-      // const url = ;
-      try {
-        const imageurl = await axios.get(
+
+      /////////////////////////////////////
+
+      /////////////////////////////////////////////
+
+      let message;
+      if (messages?.text) {
+        message = {
+          conversationId: contacts.wa_id,
+          senderId: contacts.wa_id,
+          senderName: contacts.profile.name,
+          text: messages?.text?.body,
+        };
+      } else if (messages?.image) {
+        const id = messages?.image?.id;
+        const image = await axios.get(
           `https://graph.facebook.com/v14.0/${id}?access_token=${process.env.WA_ACCESS_TOKEN}`
-          //   {
-          //   headers: { Authorization: `Bearer ${process.env.WA_ACCESS_TOKEN}` },
-          // }
         );
-        const image = imageurl?.data?.url;
-        console.log("Image url: \n", imageurl?.data?.url);
-        // const img = await axios.get(
-        //   `${image}&access_token=${process.env.WA_ACCESS_TOKEN}`
-        // );
-
-        const img = await axios.get(
-          image, // `${image}?access_token=${process.env.WA_ACCESS_TOKEN}`
-          {
-            responseType: "arraybuffer",
-            headers: { Authorization: `Bearer ${process.env.WA_ACCESS_TOKEN}` },
-          }
-        );
-        const gg = Buffer.from(img.data, "binary").toString("base64");
-        console.log("Image BUFFER",gg);
-        console.log("Image BUFFER",typeof(gg));
-        // console.log("Img: \n", img?.data);
-      } catch (error) {
-        console.log("Error: ");
-        console.log(error);
+        const imageurl = image?.data?.url;
+        // console.log("Image url: \n", imageurl?.data?.url);
+        const imgbinary = await axios.get(imageurl, {
+          responseType: "arraybuffer",
+          headers: { Authorization: `Bearer ${process.env.WA_ACCESS_TOKEN}` },
+        });
+        const img = Buffer.from(imgbinary.data, "binary").toString("base64");
+        message = {
+          conversationId: contacts.wa_id,
+          senderId: contacts.wa_id,
+          senderName: contacts.profile.name,
+          img,
+        };
       }
-      res.sendStatus(200);
-      // let message;
-      // messages.type === "text"
-      //   ? (message = {
-      //       conversationId: contacts.wa_id,
-      //       senderId: contacts.wa_id,
-      //       senderName: contacts.profile.name,
-      //       text: messages?.text?.body,
-      //     })
-      //   : (message = {
-      //       conversationId: contacts.wa_id,
-      //       senderId: contacts.wa_id,
-      //       senderName: contacts.profile.name,
-      //       img: messages?.image?.url,
-      //     });
 
-      // io.emit("waMessage", message);
+      io.emit("waMessage", message);
 
-      // // try {
-      // //   Message.create(message);
-      // //   const result = await Conversation.exists({ id: contacts.wa_id });
-      // //   if (!result) {
-      // //     const conversation = {
-      // //       id: contacts.wa_id,
-      // //       name: contacts.profile.name,
-      // //     };
-      // //     await Conversation.create(conversation);
-      // //   }
-      //   res.sendStatus(200);
-      // } catch (error) {
-      //   console.log(error);
-      //   res.sendStatus(500);
-      // }
+      try {
+        Message.create(message);
+        const result = await Conversation.exists({ id: contacts.wa_id });
+        if (!result) {
+          const conversation = {
+            id: contacts.wa_id,
+            name: contacts.profile.name,
+          };
+          await Conversation.create(conversation);
+        }
+        res.sendStatus(200);
+      } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+      }
     }
     // Message status request
     else {
