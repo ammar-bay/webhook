@@ -17,9 +17,8 @@ add authentication using aws
 change the prod database to AWS
 
 
-refresh on message
-pic on Whatsapp
+fb notification photo type changes in schema as well
+pic on Whatsapp changes in schema as well
 link fb notification card to post
 ring on new msg
-remove autmated ack reply
-nested comments on fb
+nested comments on fb feed
