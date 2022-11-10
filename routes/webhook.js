@@ -16,16 +16,25 @@ const WhatsappWebhookRouter = (io) => {
       console.log(req.body.entry[0]?.changes[0]?.value);
       const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
-      
-      const message = {
-        conversationId: contacts.wa_id,
-        senderId: contacts.wa_id,
-        senderName: contacts.profile.name,
-        text: messages?.text.body,
-      };
+
+      console.log(messages?.image);
+      // let message;
+      // messages.type === "text"
+      //   ? (message = {
+      //       conversationId: contacts.wa_id,
+      //       senderId: contacts.wa_id,
+      //       senderName: contacts.profile.name,
+      //       text: messages?.text?.body,
+      //     })
+      //   : (message = {
+      //       conversationId: contacts.wa_id,
+      //       senderId: contacts.wa_id,
+      //       senderName: contacts.profile.name,
+      //       img: messages?.image?.url,
+      //     });
 
       io.emit("waMessage", message);
-      
+
       try {
         Message.create(message);
         const result = await Conversation.exists({ id: contacts.wa_id });
@@ -36,7 +45,7 @@ const WhatsappWebhookRouter = (io) => {
           };
           await Conversation.create(conversation);
         }
-      res.sendStatus(200);
+        res.sendStatus(200);
       } catch (error) {
         console.log(error);
         res.sendStatus(500);
