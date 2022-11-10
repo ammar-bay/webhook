@@ -34,15 +34,18 @@ const WhatsappWebhookRouter = (io) => {
             id: contacts.wa_id,
             name: contacts.profile.name,
           };
-          Conversation.create(conversation);
+          await Conversation.create(conversation);
         }
+      res.sendStatus(200);
       } catch (error) {
         console.log(error);
+        res.sendStatus(500);
       }
     }
     // Message status request
     else {
       console.log("Message status request");
+      res.sendStatus(200);
     }
 
     // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
