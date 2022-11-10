@@ -19,7 +19,7 @@ const WhatsappWebhookRouter = (io) => {
       console.log(messages);
       console.log("Image: ", messages?.image?.id);
       const id = messages?.image?.id;
-      const url = `https://graph.facebook.com/v14.0/${id}?fields=media_url&access_token=${process.env.WA_ACCESS_TOKEN}`;
+      const url = `https://graph.facebook.com/v14.0/${id}?access_token=${process.env.WA_ACCESS_TOKEN}`;
       try {
         
         const image = await axios.get(url);
