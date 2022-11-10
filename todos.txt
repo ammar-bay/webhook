@@ -3,7 +3,7 @@ Whatsapp:
     how to add operators to conversation members
     add new message symbol to each new conversation
     sent delivered and seen events ticks
-        
+
 
 
 Facebook:
@@ -20,7 +20,8 @@ change the prod database to AWS
 
 
 fb notification photo type changes in schema as well
-pic on Whatsapp changes in schema as well
 link fb notification card to post
+
 ring on new msg
 nested comments on fb feed
+pagination
