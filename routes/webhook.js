@@ -16,8 +16,9 @@ const WhatsappWebhookRouter = (io) => {
       console.log(req.body.entry[0]?.changes[0]?.value);
       const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
-
-      console.log(messages?.image);
+      console.log(messages);
+      console.log("Image: ", messages?.image);
+      res.sendStatus(200);
       // let message;
       // messages.type === "text"
       //   ? (message = {
@@ -33,23 +34,23 @@ const WhatsappWebhookRouter = (io) => {
       //       img: messages?.image?.url,
       //     });
 
-      io.emit("waMessage", message);
+      // io.emit("waMessage", message);
 
-      try {
-        Message.create(message);
-        const result = await Conversation.exists({ id: contacts.wa_id });
-        if (!result) {
-          const conversation = {
-            id: contacts.wa_id,
-            name: contacts.profile.name,
-          };
-          await Conversation.create(conversation);
-        }
-        res.sendStatus(200);
-      } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
-      }
+      // // try {
+      // //   Message.create(message);
+      // //   const result = await Conversation.exists({ id: contacts.wa_id });
+      // //   if (!result) {
+      // //     const conversation = {
+      // //       id: contacts.wa_id,
+      // //       name: contacts.profile.name,
+      // //     };
+      // //     await Conversation.create(conversation);
+      // //   }
+      //   res.sendStatus(200);
+      // } catch (error) {
+      //   console.log(error);
+      //   res.sendStatus(500);
+      // }
     }
     // Message status request
     else {
