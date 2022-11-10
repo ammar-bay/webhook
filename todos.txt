@@ -19,9 +19,11 @@ add authentication using aws
 change the prod database to AWS
 
 
-fb notification photo type changes in schema as well
 link fb notification card to post
-
+filter type viewed/unviewed recent
 ring on new msg
 nested comments on fb feed
 pagination
+
+fb notification photo type changes in schema as well
+msg send on enter
