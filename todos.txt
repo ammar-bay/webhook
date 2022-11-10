@@ -24,6 +24,6 @@ filter type viewed/unviewed recent
 ring on new msg
 nested comments on fb feed
 pagination
-
+name on whatsapp number after 1st reply
 fb notification photo type changes in schema as well
 msg send on enter
