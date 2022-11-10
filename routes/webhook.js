@@ -13,15 +13,20 @@ const WhatsappWebhookRouter = (io) => {
     // console.log(req.body);
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
       // console.log("Message request");
-      console.log(req.body.entry[0]?.changes[0]?.value);
+      // console.log(req.body.entry[0]?.changes[0]?.value);
       const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
       console.log(messages);
       console.log("Image: ", messages?.image?.id);
       const id = messages?.image?.id;
       const url = `https://graph.facebook.com/v14.0/${id}?fields=media_url&access_token=${process.env.WA_ACCESS_TOKEN}`;
-      const image = await axios.get(url);
-      console.log(image);
+      try {
+        
+        const image = await axios.get(url);
+        console.log(image);
+      } catch (error) {
+        
+      }
       res.sendStatus(200);
       // let message;
       // messages.type === "text"
