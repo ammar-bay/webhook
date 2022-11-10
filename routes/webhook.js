@@ -42,7 +42,8 @@ const WhatsappWebhookRouter = (io) => {
           }
         );
         const gg = Buffer.from(img.data, "binary").toString("base64");
-        console.log(gg);
+        console.log("Image BUFFER",gg);
+        console.log("Image BUFFER",typeof(gg));
         // console.log("Img: \n", img?.data);
       } catch (error) {
         console.log("Error: ");
