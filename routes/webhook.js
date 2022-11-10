@@ -25,7 +25,7 @@ const WhatsappWebhookRouter = (io) => {
         const image = await axios.get(url);
         console.log(image);
       } catch (error) {
-        
+        console.log(error);
       }
       res.sendStatus(200);
       // let message;
