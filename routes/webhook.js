@@ -30,17 +30,20 @@ const WhatsappWebhookRouter = (io) => {
         );
         const image = imageurl?.data?.url;
         console.log("Image url: \n", imageurl?.data?.url);
-        const img = await axios.get(
-          `${image}&access_token=${process.env.WA_ACCESS_TOKEN}`
-        );
-
         // const img = await axios.get(
-        //   image, // `${image}?access_token=${process.env.WA_ACCESS_TOKEN}`
-        //   {
-        //     headers: { Authorization: `Bearer ${process.env.WA_ACCESS_TOKEN}` },
-        //   }
+        //   `${image}&access_token=${process.env.WA_ACCESS_TOKEN}`
         // );
-        console.log("Img: \n", img?.data);
+
+        const img = await axios.get(
+          image, // `${image}?access_token=${process.env.WA_ACCESS_TOKEN}`
+          {
+            responseType: "arraybuffer",
+            headers: { Authorization: `Bearer ${process.env.WA_ACCESS_TOKEN}` },
+          }
+        );
+        const gg = Buffer.from(img.data, "binary").toString("base64");
+        console.log(gg);
+        // console.log("Img: \n", img?.data);
       } catch (error) {
         console.log("Error: ");
         console.log(error);
