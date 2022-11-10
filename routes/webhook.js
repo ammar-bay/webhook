@@ -31,7 +31,7 @@ const WhatsappWebhookRouter = (io) => {
         const image = imageurl?.data?.url;
         console.log("Image url: \n", imageurl?.data?.url);
         const img = await axios.get(
-          `${image}/?access_token=${process.env.WA_ACCESS_TOKEN}`
+          `${image}&access_token=${process.env.WA_ACCESS_TOKEN}`
         );
 
         // const img = await axios.get(
