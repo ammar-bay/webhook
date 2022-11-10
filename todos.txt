@@ -8,7 +8,7 @@ Facebook:
     all cards should have checked/seen button
     comments cards should have reply button and reply should be shown on that card
     item photo: check the icoming properties and include that in the notification schema
-    
+
 
 if not login redirect to login
 change the prod database in mongo for now
@@ -17,3 +17,9 @@ add authentication using aws
 change the prod database to AWS
 
 
+refresh on message
+pic on Whatsapp
+link fb notification card to post
+ring on new msg
+remove autmated ack reply
+nested comments on fb

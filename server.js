@@ -46,13 +46,32 @@ io.on("connection", (socket) => {
   });
 });
 
-mongoose.connect(
-  process.env.MONGO_URL,
-  { useNewUrlParser: true, useUnifiedTopology: true },
-  () => {
-    console.log("Connected to MongoDB");
+// const DB =
+//   process.env.NODE_ENV === "development"
+//     ? `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatcluster.9mbke.mongodb.net/?retryWrites=true&w=majority`
+//     : `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatprod.9mbke.mongodb.net/?retryWrites=true&w=majority`;
+// mongoose.connect(
+//   process.env.MONGODB_URL,
+//   // process.env.MONGODB_URL || DB,
+//   { useNewUrlParser: true, useUnifiedTopology: true },
+//   () => {
+//     console.log("Connected to MongoDB");
+//   }
+// );
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URL, {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+    });
+  } catch (err) {
+    console.log("Could not connect to DB");
+    console.error(err);
   }
-);
+};
+
+connectDB();
 
 //middleware
 app.set("view engine", "ejs");
@@ -78,6 +97,11 @@ app.use("/conversations", conversationRoute(io));
 app.use("/webhook", webhookRoute(io));
 app.use("/fbpage", fbpagewebhookRoute(io));
 
-server.listen(PORT, () => {
-  console.log("Backend server is running!");
+
+mongoose.connection.once('open', () => {
+  console.log('Connected to MongoDB');
+  // app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  server.listen(PORT, () => {
+    console.log("Backend server is running!");
+  });
 });
