@@ -28,8 +28,8 @@ const WhatsappWebhookRouter = (io) => {
       
       try {
         Message.create(message);
-        const res = await Conversation.exists({ id: contacts.wa_id });
-        if (!res) {
+        const result = await Conversation.exists({ id: contacts.wa_id });
+        if (!result) {
           const conversation = {
             id: contacts.wa_id,
             name: contacts.profile.name,
