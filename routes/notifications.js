@@ -35,7 +35,7 @@ router.post("/:id/reply", async (req, res) => {
       }
     );
     console.log("reply sent");
-    console.log(result.data);
+    // console.log(result.data);
     const notification = await Notification.findOneAndUpdate(
       { comment_id: req.params.id },
       {

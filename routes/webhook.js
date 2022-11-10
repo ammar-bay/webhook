@@ -10,10 +10,10 @@ const WhatsappWebhookRouter = (io) => {
     // console.log(JSON.stringify(req.body, null, 2));
     // check type of incoming the incoming request
     // Message request
-    console.log(req.body);
+    // console.log(req.body);
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
       // console.log("Message request");
-      
+      console.log(req.body.entry[0]?.changes[0]?.value);
       const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
       
@@ -42,7 +42,7 @@ const WhatsappWebhookRouter = (io) => {
     }
     // Message status request
     else {
-      // console.log("Message status request");
+      console.log("Message status request");
     }
 
     // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
