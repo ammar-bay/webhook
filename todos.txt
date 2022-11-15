@@ -28,3 +28,6 @@ name on whatsapp number after 1st reply
 fb notification photo type changes in schema as well
 msg send on enter
 add signout functionality
+
+bugs:
+when user sends a voice msg

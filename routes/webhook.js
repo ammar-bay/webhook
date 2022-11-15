@@ -65,7 +65,7 @@ const WhatsappWebhookRouter = (io) => {
         } else if (!result.senderName) {
           const ss = await Conversation.updateOne(
             { id: contacts.wa_id },
-            { $set: { senderName: contacts.profile.name } }
+            { $set: { name: contacts.profile.name } }
           );
           console.log(ss);
         }
