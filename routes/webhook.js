@@ -63,10 +63,11 @@ const WhatsappWebhookRouter = (io) => {
           };
           await Conversation.create(conversation);
         } else if (!result.senderName) {
-          await Conversation.updateOne(
+          const ss = await Conversation.updateOne(
             { id: contacts.wa_id },
             { $set: { senderName: contacts.profile.name } }
           );
+          console.log(ss);
         }
         res.sendStatus(200);
       } catch (error) {
