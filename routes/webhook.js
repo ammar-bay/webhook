@@ -67,6 +67,8 @@ const WhatsappWebhookRouter = (io) => {
             { id: contacts.wa_id },
             { $set: { name: contacts.profile.name } }
           );
+        } else {
+          console.log(result);
         }
         res.sendStatus(200);
       } catch (error) {
