@@ -10,12 +10,12 @@ const ConversationSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
-    // lastmessage: {
-    //   type: String,
-    // },
-    // lastmessagetime: {
-    //   type: String,
-    // },
+    lastmessage: {
+      type: String,
+    },
+    lastmessagetime: {
+      type: String,
+    },
     members: { // this will be an array of operators id
       type: Array,
     },

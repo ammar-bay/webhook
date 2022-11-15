@@ -61,6 +61,8 @@ const WhatsappWebhookRouter = (io) => {
             name: contacts.profile.name,
           };
           await Conversation.create(conversation);
+        } else {
+          console.log(result);
         }
         res.sendStatus(200);
       } catch (error) {
