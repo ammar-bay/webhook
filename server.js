@@ -46,6 +46,7 @@ io.on("connection", (socket) => {
   });
 });
 
+// dev db
 const DB = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatcluster.9mbke.mongodb.net/?retryWrites=true&w=majority`;
 
 // const DB =
