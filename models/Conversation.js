@@ -10,6 +10,10 @@ const ConversationSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
+    lastmessagetype: {
+      type: String,
+      // required: true,
+    },
     lastmessage: {
       type: String,
     },

@@ -60,15 +60,39 @@ const WhatsappWebhookRouter = (io) => {
           const conversation = {
             id: contacts.wa_id,
             name: contacts.profile.name,
+            lastmessagetype: messages?.text ? "text" : "image",
+            lastmessage: messages?.text ? messages?.text?.body : "Image",
+            lastmessagetime: Date.now(),
+            lastmessageby: "customer",
           };
           await Conversation.create(conversation);
-        } else if (!result.name) {
-          const ss = await Conversation.updateOne(
-            { id: contacts.wa_id },
-            { $set: { name: contacts.profile.name } }
-          );
         } else {
-          console.log(result);
+          if (!result.name) {
+            await Conversation.updateOne(
+              { id: contacts.wa_id },
+              {
+                $set: {
+                  name: contacts.profile.name,
+                  lastmessage: messages?.text ? messages?.text?.body : "Image",
+                  lastmessagetime: Date.now(),
+                  lastmessagetype: messages?.text ? "text" : "image",
+                  lastmessageby: "customer",
+                },
+              }
+            );
+          } else {
+            await Conversation.updateOne(
+              { id: contacts.wa_id },
+              {
+                $set: {
+                  lastmessage: messages?.text ? messages?.text?.body : "Image",
+                  lastmessagetime: Date.now(),
+                  lastmessagetype: messages?.text ? "text" : "image",
+                  lastmessageby: "customer",
+                },
+              }
+            );
+          }
         }
         res.sendStatus(200);
       } catch (error) {
