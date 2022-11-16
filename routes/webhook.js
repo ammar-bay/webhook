@@ -108,7 +108,8 @@ const WhatsappWebhookRouter = (io) => {
     else {
       console.log("Message status request");
       // console.log(req.body);
-      io.emit("msgStatus", req.body.entry[0]?.changes);
+      const status = req.body.entry[0]?.changes[0]?.value?.statuses[0];
+      io.emit("msgStatus", status);
       res.sendStatus(200);
     }
 
