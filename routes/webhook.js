@@ -100,12 +100,14 @@ const WhatsappWebhookRouter = (io) => {
         res.sendStatus(200);
       } catch (error) {
         console.log(error);
+        console.log("Error in WA Message request");
         res.sendStatus(500);
       }
     }
     // Message status request
     else {
       console.log("Message status request");
+      console.log(req.body);
       res.sendStatus(200);
     }
 
