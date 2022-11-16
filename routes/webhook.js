@@ -14,7 +14,7 @@ const WhatsappWebhookRouter = (io) => {
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
       // console.log("Message request");
       console.log(req.body.entry[0]?.changes[0]?.value);
-      const type = req.body.entry[0]?.changes[0]?.value?.type;
+      const type = req.body.entry[0]?.changes[0]?.value?.messages[0]?.type;
       const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
       // console.log(messages);
