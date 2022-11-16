@@ -39,5 +39,4 @@ sent delivered and seen events ticks to eash message
 currentchat highlight
 search customer by name or number
 filter by unread
-
 add members to conversation
