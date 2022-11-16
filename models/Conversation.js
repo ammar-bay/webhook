@@ -26,6 +26,9 @@ const ConversationSchema = new mongoose.Schema(
       // this will be an array of operators id
       type: Array,
     },
+    unread: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );

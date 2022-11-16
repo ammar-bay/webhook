@@ -36,6 +36,7 @@ router.post("/", async (req, res) => {
           lastmessagetime: Date.now(),
           lastmessagetype: "text",
           lastmessageby: senderName,
+          unread: false,
         },
       }
     );

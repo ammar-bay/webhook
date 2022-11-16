@@ -50,7 +50,7 @@ const WhatsappWebhookRouter = (io) => {
         };
       }
 
-      io.emit("waMessage", message);
+      io.emit("waMessage", { ...message, createdAt: Date.now() });
 
       try {
         Message.create(message);
@@ -64,6 +64,7 @@ const WhatsappWebhookRouter = (io) => {
             lastmessage: messages?.text ? messages?.text?.body : "Image",
             lastmessagetime: Date.now(),
             lastmessageby: "customer",
+            unread: true,
           };
           await Conversation.create(conversation);
         } else {
@@ -77,6 +78,7 @@ const WhatsappWebhookRouter = (io) => {
                   lastmessagetime: Date.now(),
                   lastmessagetype: messages?.text ? "text" : "image",
                   lastmessageby: "customer",
+                  unread: true,
                 },
               }
             );
@@ -89,6 +91,7 @@ const WhatsappWebhookRouter = (io) => {
                   lastmessagetime: Date.now(),
                   lastmessagetype: messages?.text ? "text" : "image",
                   lastmessageby: "customer",
+                  unread: true,
                 },
               }
             );
