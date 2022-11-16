@@ -13,11 +13,11 @@ const WhatsappWebhookRouter = (io) => {
     // console.log(req.body);
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
       // console.log("Message request");
-      console.log(req.body.entry[0]?.changes[0]?.value);
+      // console.log(req.body.entry[0]?.changes[0]?.value);
       const type = req.body.entry[0]?.changes[0]?.value?.messages[0]?.type;
       const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
-      // console.log(messages);
+      console.log(messages);
 
       /////////////////////////////////////
 
@@ -54,6 +54,9 @@ const WhatsappWebhookRouter = (io) => {
           type,
         };
       } else if (type === "audio") {
+        res.sendStatus(200);
+        return;
+      } else if (type === "reaction") {
         res.sendStatus(200);
         return;
       } else {

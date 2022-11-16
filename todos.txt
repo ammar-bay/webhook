@@ -51,9 +51,9 @@ issues:
 message sending multiple times
 send disable after first press
 conversationId is required
-
-
 seen status
+
+
 when user sends a voice msg
 react on messages
 
