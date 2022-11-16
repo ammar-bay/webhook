@@ -42,3 +42,5 @@ filter by unread
 add members to conversation
 
 expiration date of conversation - dont allow to send msg after that can just send template message
+toast on new msg sent template
+time
