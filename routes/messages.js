@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
     const result = await axios.post(url, body, {
       headers: { Authorization: token, "Content-Type": "application/json" },
     });
-    // console.log(result.data);
+    console.log(result.data.messages[0].id);
     const newMessage = new Message({
       ...req.body,
       id: result.data.messages[0].id,
