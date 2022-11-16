@@ -25,8 +25,11 @@ router.post("/", async (req, res) => {
     const result = await axios.post(url, body, {
       headers: { Authorization: token, "Content-Type": "application/json" },
     });
-    console.log(result.data);
-    const newMessage = new Message(req.body);
+    // console.log(result.data);
+    const newMessage = new Message({
+      ...req.body,
+      id: result.data.messages[0].id,
+    });
     const savedMessage = await newMessage.save();
     await Conversation.updateOne(
       { id: conversationId },

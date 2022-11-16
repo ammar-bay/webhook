@@ -5,6 +5,16 @@ const MessageSchema = new mongoose.Schema(
     conversationId: {
       // this is customers phonenumber
       type: String,
+      required: true,
+    },
+    id: {
+      type: String,
+      required: true,
+    },
+    status: {
+      type: String,
+      required: true,
+      default: "",
     },
     senderId: {
       // this is operators id

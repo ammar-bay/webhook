@@ -109,6 +109,14 @@ const WhatsappWebhookRouter = (io) => {
       console.log("Message status request");
       // console.log(req.body);
       const status = req.body.entry[0]?.changes[0]?.value?.statuses[0];
+      await Message.updateOne(
+        { id: status.id },
+        {
+          $set: {
+            status: status.status,
+          },
+        }
+      );
       io.emit("msgStatus", status);
       res.sendStatus(200);
     }

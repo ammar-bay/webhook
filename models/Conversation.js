@@ -29,6 +29,7 @@ const ConversationSchema = new mongoose.Schema(
     unread: {
       type: Boolean,
     },
+    
   },
   { timestamps: true }
 );
