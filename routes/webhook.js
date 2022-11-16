@@ -55,9 +55,11 @@ const WhatsappWebhookRouter = (io) => {
         };
       } else if (type === "audio") {
         res.sendStatus(200);
+        return;
       } else {
         console.log("Unknown message type", type);
         res.sendStatus(200);
+        return;
       }
 
       io.emit("waMessage", { ...message, createdAt: Date.now() });
