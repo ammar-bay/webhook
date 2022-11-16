@@ -30,7 +30,6 @@ msg send on enter
 add signout functionality
 
 bugs:
-when user sends a voice msg
 
 
 sort conversation by last message
@@ -51,9 +50,10 @@ time
 issues:
 message sending multiple times
 send disable after first press
+conversationId is required
+
 
 seen status
-
+when user sends a voice msg
 react on messages
 
-conversationId is required

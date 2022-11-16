@@ -54,6 +54,7 @@ const WhatsappWebhookRouter = (io) => {
           type,
         };
       } else if (type === "audio") {
+        res.sendStatus(200);
       } else {
         res.sendStatus(200);
       }
