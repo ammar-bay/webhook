@@ -40,6 +40,9 @@ const ConversationRouter = (io) => {
       if (!convo) {
         await Conversation.create({
           id: receiverId,
+          lastmessage: template,
+          lastmessagetime: Date.now(),
+          lastmessagetype: "template",
           members: [senderId],
         });
       }
