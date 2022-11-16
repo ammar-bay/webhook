@@ -36,7 +36,7 @@ const ConversationRouter = (io) => {
       });
 
       //save the conversation in db
-      console.log("result.data.messages[0].id", result.data.messages[0].id);
+      // console.log("result.data.messages[0].id", result.data.messages[0].id);
       const convo = await Conversation.exists({ id: receiverId });
       if (!convo) {
         await Conversation.create({

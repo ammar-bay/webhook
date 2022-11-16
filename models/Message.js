@@ -5,7 +5,7 @@ const MessageSchema = new mongoose.Schema(
     conversationId: {
       // this is customers phonenumber
       type: String,
-      // required: true,
+      required: true,
     },
     id: {
       type: String,
