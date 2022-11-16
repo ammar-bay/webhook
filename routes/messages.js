@@ -1,10 +1,11 @@
 const router = require("express").Router();
 const Message = require("../models/Message");
 const axios = require("axios");
+const Conversation = require("../models/Conversation");
 
 // Operator replies to a message
 router.post("/", async (req, res) => {
-  const { senderId, conversationId, text } = req.body;
+  const { senderId, conversationId, text, senderName } = req.body;
   const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
   const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
 
@@ -27,6 +28,18 @@ router.post("/", async (req, res) => {
     // console.log(result.data);
     const newMessage = new Message(req.body);
     const savedMessage = await newMessage.save();
+    await Conversation.updateOne(
+      { id: conversationId },
+      {
+        $set: {
+          lastmessage: text,
+          lastmessagetime: Date.now(),
+          lastmessagetype: "text",
+          lastmessageby: senderName,
+        },
+      }
+    );
+
     res.status(200).json(savedMessage);
   } catch (error) {
     console.log(error);

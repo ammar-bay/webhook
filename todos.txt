@@ -31,3 +31,9 @@ add signout functionality
 
 bugs:
 when user sends a voice msg
+
+
+sort conversation by last message
+add new message symbol to each new conversation
+sent delivered and seen events ticks to eash message
+search customer by name or number

@@ -2,11 +2,13 @@ const mongoose = require("mongoose");
 
 const ConversationSchema = new mongoose.Schema(
   {
-    id: { // this is customers phonenumber
+    id: {
+      // this is customers phonenumber
       type: String,
       required: true,
     },
-    name: { // this is customers name
+    name: {
+      // this is customers name
       type: String,
       // required: true,
     },
@@ -18,9 +20,10 @@ const ConversationSchema = new mongoose.Schema(
       type: String,
     },
     lastmessagetime: {
-      type: String,
+      type: Number,
     },
-    members: { // this will be an array of operators id
+    members: {
+      // this will be an array of operators id
       type: Array,
     },
   },
