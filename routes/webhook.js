@@ -14,6 +14,7 @@ const WhatsappWebhookRouter = (io) => {
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
       // console.log("Message request");
       console.log(req.body.entry[0]?.changes[0]?.value);
+      const type = req.body.entry[0]?.changes[0]?.value?.type;
       const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
       // console.log(messages);
@@ -23,14 +24,17 @@ const WhatsappWebhookRouter = (io) => {
       /////////////////////////////////////////////
 
       let message;
-      if (messages?.text) {
+      if (type === "text") {
+        // if (messages?.text) {
         message = {
           conversationId: contacts.wa_id,
           senderId: contacts.wa_id,
           senderName: contacts.profile.name,
           text: messages?.text?.body,
+          type,
         };
-      } else if (messages?.image) {
+      } else if (type === "image") {
+        // } else if (messages?.image) {
         const id = messages?.image?.id;
         const image = await axios.get(
           `https://graph.facebook.com/v14.0/${id}?access_token=${process.env.WA_ACCESS_TOKEN}`
@@ -47,7 +51,11 @@ const WhatsappWebhookRouter = (io) => {
           senderId: contacts.wa_id,
           senderName: contacts.profile.name,
           img,
+          type,
         };
+      } else if (type === "audio") {
+      } else {
+        res.sendStatus(200);
       }
 
       io.emit("waMessage", { ...message, createdAt: Date.now() });
