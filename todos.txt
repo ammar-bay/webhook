@@ -1,3 +1,7 @@
+Overall:
+    Post to every platform
+    mobile layout
+
 Whatsapp:
     how to get template message
     how to add operators to conversation members

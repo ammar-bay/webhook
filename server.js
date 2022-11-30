@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const axios = require("axios");
+const rootRoute = require("./routes/root");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
@@ -82,6 +83,7 @@ app.use(cors());
 // app.use(cors(corsOptions));
 
 // Routes
+app.use("/", rootRoute);
 app.use("/auth", authRoute);
 app.use("/users", userRoute);
 app.use("/posts", postRoute);
@@ -97,6 +99,6 @@ mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
   // app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   server.listen(PORT, () => {
-    console.log("Backend server is running!");
+    console.log(`Server running on port ${PORT}`);
   });
 });
