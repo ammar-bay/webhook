@@ -61,3 +61,15 @@ seen status
 when user sends a voice msg
 react on messages
 
+Need to keep track of total conversations for month
+
+Next Steps:
+
+Make a separate dev and production enviroment
+Prod:
+    UC AlNafi Facebook Developers App
+    AlNafi Official Facebook Page
+    AlNafi Whatsapp Number
+Dev:
+    Unified Chat Facebook Developers App
+

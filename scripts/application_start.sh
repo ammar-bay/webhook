@@ -14,5 +14,7 @@ export NVM_DIR="$HOME/.nvm"
 #install node modules
 npm install
 
+sudo fuser -k 8900/tcp
+
 #start our node app in the background
 node server.js > app.out.log 2> app.err.log < /dev/null & 
