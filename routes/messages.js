@@ -2,6 +2,7 @@ const router = require("express").Router();
 const Message = require("../models/Message");
 const axios = require("axios");
 const Conversation = require("../models/Conversation");
+const { parse } = require("csv-parse");
 
 // Operator replies to a message
 router.post("/", async (req, res) => {
@@ -59,6 +60,65 @@ router.post("/", async (req, res) => {
   // });
 
   // save the conversation in db
+});
+
+router.post("/numbers", async (req, res) => {
+  const { array, template } = req.body;
+  const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
+  const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
+  console.log(req.body);
+  const cleanedData = array.filter((item) => item.Number && item.Name);
+  const result = await Promise.all(
+    cleanedData.map(async (item) => {
+      const receiverId = item.Number.replace("\r", "");
+      const body = `{
+        "messaging_product": "whatsapp",
+        "to": ${receiverId},
+        "type": "template",
+        "template": { "name": "${template}", "language": { "code": "en_US" } }
+      }`;
+      // can use promise.all here
+      try {
+        //send the (template) message to customer
+        const result = await axios.post(url, body, {
+          headers: { Authorization: token, "Content-Type": "application/json" },
+        });
+
+        //save the conversation in db
+        // console.log("result.data.messages[0].id", result.data.messages[0].id);
+        const convo = await Conversation.exists({ id: receiverId });
+        if (!convo) {
+          await Conversation.create({
+            id: receiverId,
+            lastmessage: template,
+            lastmessagetime: Date.now(),
+            lastmessagetype: "template",
+            members: [senderId],
+          });
+        }
+        console.log("Conversation created", receiverId);
+        const messages = await Message.create({
+          conversationId: receiverId,
+          senderId,
+          senderName,
+          text: template,
+          id: result.data.messages[0].id,
+        });
+
+        // res.sendStatus(200);
+        console.log("Message sent successfully to: ", receiverId);
+      } catch (error) {
+        console.log(error);
+        console.log("Message unsuccessful to: ", receiverId);
+        // res.status(500).json({ error: "Something went wrong" });
+      }
+    })
+  );
+
+  result.forEach((item) => {
+    console.log(item);
+  });
+  res.sendStatus(200);
 });
 
 //get

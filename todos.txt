@@ -8,8 +8,6 @@ Whatsapp:
     add new message symbol to each new conversation
     sent delivered and seen events ticks
 
-
-
 Facebook:
     all cards should have checked/seen button
     comments cards should have reply button and reply should be shown on that card
@@ -34,8 +32,6 @@ msg send on enter
 add signout functionality
 
 bugs:
-
-
 sort conversation by last message
 add new message symbol to each new conversation
 sent delivered and seen events ticks to eash message
@@ -49,13 +45,6 @@ toast on new msg sent template
 time
 
 
-
-
-issues:
-message sending multiple times
-send disable after first press
-conversationId is required
-seen status
 
 
 when user sends a voice msg
