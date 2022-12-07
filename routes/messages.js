@@ -107,10 +107,12 @@ router.post("/numbers", async (req, res) => {
 
         // res.sendStatus(200);
         console.log("Message sent successfully to: ", receiverId);
+        return receiverId;
       } catch (error) {
         console.log(error);
         console.log("Message unsuccessful to: ", receiverId);
         // res.status(500).json({ error: "Something went wrong" });
+        return receiverId;
       }
     })
   );
@@ -118,7 +120,7 @@ router.post("/numbers", async (req, res) => {
   result.forEach((item) => {
     console.log(item);
   });
-  res.sendStatus(200);
+  res.status(200).json(result);
 });
 
 //get

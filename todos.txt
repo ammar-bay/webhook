@@ -44,9 +44,6 @@ expiration date of conversation - dont allow to send msg after that can just sen
 toast on new msg sent template
 time
 
-
-
-
 when user sends a voice msg
 react on messages
 
