@@ -63,7 +63,7 @@ router.post("/", async (req, res) => {
 });
 
 router.post("/numbers", async (req, res) => {
-  const { array, template,senderId } = req.body;
+  const { array, template, senderId, senderName } = req.body;
   const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
   const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
   console.log(req.body);
