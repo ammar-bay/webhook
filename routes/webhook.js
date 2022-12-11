@@ -6,6 +6,7 @@ const WhatsappWebhookRouter = (io) => {
   const router = require("express").Router();
 
   router.post("/", async (req, res) => {
+    console.log("POST request to /webhook");
     // Check the Incoming webhook message
     // console.log(JSON.stringify(req.body, null, 2));
     // check type of incoming the incoming request
@@ -181,6 +182,7 @@ const WhatsappWebhookRouter = (io) => {
   // Accepts GET requests at the /webhook endpoint. You need this URL to setup webhook initially.
   // info on verification request payload: https://developers.facebook.com/docs/graph-api/webhooks/getting-started#verification-requests
   router.get("/", (req, res) => {
+    console.log("GET request received at /webhook endpoint");
     /**
      * UPDATE YOUR VERIFY TOKEN
      *This will be the Verify Token value when you set up webhook
