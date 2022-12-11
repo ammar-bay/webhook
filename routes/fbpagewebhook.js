@@ -30,18 +30,17 @@ const FacebookWebhookRouter = (io) => {
           // console.log("Error in saving notification in db");
           console.log(error);
         }
+      } else {
+        try {
+          console.log(req.body.entry[0].messaging);
+        } catch (error) {
+          console.log("Error in logging");
+          console.log(error);
+        }
       }
       res.sendStatus(200);
     } else {
       // Return a '404 Not Found' if event is not from a Facebook API
-      console.log("Not a Facebook API");
-      // console.log(req.body.entry[0].messaging);
-      try {
-        console.log(req.body.entry[0].messaging);
-      } catch (error) {
-        console.log("Error in logging");
-        console.log(error);
-      }
       res.sendStatus(200);
       // res.sendStatus(404);
     }
