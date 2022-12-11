@@ -8,7 +8,7 @@ const FacebookWebhookRouter = (io) => {
   router.post("/", async (req, res) => {
     // Check the Incoming webhook message
     console.log("Incoming webhook message");
-    console.log(req.body);
+    console.log(req.body.changes[0].messaging);
     // console.log(JSON.stringify(req.body, null, 2));
 
     if (req.body.object === "page") {
@@ -44,6 +44,7 @@ const FacebookWebhookRouter = (io) => {
   // Accepts GET requests at the /webhook endpoint. You need this URL to setup webhook initially.
   // info on verification request payload: https://developers.facebook.com/docs/graph-api/webhooks/getting-started#verification-requests
   router.get("/", (req, res) => {
+    console.log("GET request at /fbpage endpoint");
     /**
      *UPDATE YOUR VERIFY TOKEN
      *This will be the Verify Token value when you set up webhook
