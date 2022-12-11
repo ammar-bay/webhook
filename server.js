@@ -49,12 +49,12 @@ io.on("connection", (socket) => {
 });
 
 // dev db
-// const DB = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatcluster.9mbke.mongodb.net/?retryWrites=true&w=majority`;
+const DB = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatcluster.9mbke.mongodb.net/?retryWrites=true&w=majority`;
 
-const DB =
-  process.env.NODE_ENV === "development"
-    ? `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatcluster.9mbke.mongodb.net/?retryWrites=true&w=majority`
-    : `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatprod.9mbke.mongodb.net/?retryWrites=true&w=majority`;
+// const DB =
+//   process.env.NODE_ENV === "development"
+//     ? `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatcluster.9mbke.mongodb.net/?retryWrites=true&w=majority`
+//     : `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatprod.9mbke.mongodb.net/?retryWrites=true&w=majority`;
 
 const connectDB = async () => {
   try {
