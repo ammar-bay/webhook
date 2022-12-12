@@ -7,11 +7,59 @@ const { parse } = require("csv-parse");
 // Operator replies to a message
 router.post("/", async (req, res) => {
   const { senderId, conversationId, text, senderName } = req.body;
-  const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
-  const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
+  if (req.body.platform === "messenger") {
+    console.log("Messenger");
+    const url = `https://graph.facebook.com/v15.0/me/messages?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`;
+    const body = {
+      recipient: {
+        id: conversationId,
+      },
+      message: {
+        text,
+      },
+    };
+    try {
+      const result = await axios.post(url, body, {
+        headers: {
+          // Authorization: token,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(result.data);
+      const newMessage = new Message({
+        ...req.body,
+        id: result.data.message_id,
+      });
+      const savedMessage = await newMessage.save();
+      await Conversation.updateOne(
+        { id: conversationId },
+        {
+          $set: {
+            lastmessage: text,
+            lastmessagetime: Date.now(),
+            lastmessagetype: "text",
+            lastmessageby: senderName,
+            unread: false,
+          },
+          $addToSet: { members: senderId },
+        }
+      );
 
-  // send this message to the receiverId that is the number of the customer
-  const body = `
+      res.status(200).json(savedMessage);
+
+      // return res.status(200).json({ message: "Message sent" });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Something went wrong" });
+    }
+  } else if (req.body.platform === "whatsapp") {
+    console.log("Whatsapp");
+
+    const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
+    const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
+
+    // send this message to the receiverId that is the number of the customer
+    const body = `
     {
       "messaging_product": "whatsapp",
       "recipient_type": "individual",
@@ -22,36 +70,36 @@ router.post("/", async (req, res) => {
         "body": "${text}"
       }
     }`;
-  try {
-    const result = await axios.post(url, body, {
-      headers: { Authorization: token, "Content-Type": "application/json" },
-    });
-    // console.log(result.data.messages[0].id);
-    const newMessage = new Message({
-      ...req.body,
-      id: result.data.messages[0].id,
-    });
-    const savedMessage = await newMessage.save();
-    await Conversation.updateOne(
-      { id: conversationId },
-      {
-        $set: {
-          lastmessage: text,
-          lastmessagetime: Date.now(),
-          lastmessagetype: "text",
-          lastmessageby: senderName,
-          unread: false,
-        },
-        $addToSet: { members: senderId },
-      }
-    );
+    try {
+      const result = await axios.post(url, body, {
+        headers: { Authorization: token, "Content-Type": "application/json" },
+      });
+      // console.log(result.data.messages[0].id);
+      const newMessage = new Message({
+        ...req.body,
+        id: result.data.messages[0].id,
+      });
+      const savedMessage = await newMessage.save();
+      await Conversation.updateOne(
+        { id: conversationId },
+        {
+          $set: {
+            lastmessage: text,
+            lastmessagetime: Date.now(),
+            lastmessagetype: "text",
+            lastmessageby: senderName,
+            unread: false,
+          },
+          $addToSet: { members: senderId },
+        }
+      );
 
-    res.status(200).json(savedMessage);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Something went wrong" });
+      res.status(200).json(savedMessage);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Something went wrong" });
+    }
   }
-
   // event for other operators to get this reply
   // io.emit("oMessage", {
   //   senderId,
