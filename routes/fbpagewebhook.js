@@ -10,7 +10,7 @@ const FacebookWebhookRouter = (io) => {
   router.post("/", async (req, res) => {
     // Check the Incoming webhook message
     console.log("POST request at /fbpage endpoint");
-    console.log(req.body);
+    // console.log(req.body);
 
     if (req.body.object === "page") {
       if (
@@ -35,11 +35,11 @@ const FacebookWebhookRouter = (io) => {
         req.body.entry &&
         req.body.entry[0].messaging &&
         req.body.entry[0].messaging[0] &&
-        req.body.entry[0].messaging[0]
+        req.body.entry[0].messaging[0].text
       ) {
         console.log("Message from Facebook Page Webhook");
         const value = req.body.entry[0].messaging[0];
-        console.log(value);
+        // console.log(value);
         const message = {
           conversationId: value?.sender?.id,
           senderId: value?.sender?.id,
@@ -47,6 +47,7 @@ const FacebookWebhookRouter = (io) => {
           text: value.text,
           type: "text",
         };
+        console.log(message);
 
         io.emit("waMessage", {
           ...message,
