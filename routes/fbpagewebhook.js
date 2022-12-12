@@ -8,7 +8,7 @@ const FacebookWebhookRouter = (io) => {
   router.post("/", async (req, res) => {
     // Check the Incoming webhook message
     console.log("POST request at /fbpage endpoint");
-    // console.log(req.body);
+    console.log(req.body);
 
     if (req.body.object === "page") {
       if (
@@ -40,13 +40,13 @@ const FacebookWebhookRouter = (io) => {
         console.log(value);
         // let message;
         // io.emit("fbEvents", message);
-        // message = {
-          // conversationId: ,
-          // senderId: ,
-          // senderName: ,
-          // text: ,
-        //   type: "text",
-        // };
+        const message = {
+          conversationId: value?.sender?.id,
+          senderId: value?.sender?.id,
+          senderName: ,
+          text: ,
+          type: "text",
+        };
       } else {
         console.log("Could Match from Facebook Page Webhook");
       }
