@@ -128,6 +128,7 @@ const FacebookWebhookRouter = (io) => {
         }
       } else {
         console.log("Could Match from Facebook Page Webhook");
+        console.log(req.body.entry[0]?.changes[0]?.messaging[0]);
         res.sendStatus(200);
       }
     } else {
