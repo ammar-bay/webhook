@@ -22,11 +22,7 @@ const FacebookWebhookRouter = (io) => {
         // const type = req.body.entry[0].changes[0].value.item;
         const value = req.body.entry[0].changes[0].value;
         console.log(value);
-        if (value.sender === "105647745661703") {
-          console.log("SENDER WAS PAGE IT SELF");
-          res.sendStatus(200);
-          return;
-        }
+
         console.log("Notification from Facebook Page Webhook");
         io.emit("fbEvents", value);
         try {
@@ -45,10 +41,25 @@ const FacebookWebhookRouter = (io) => {
         console.log("Message from Facebook Page Webhook");
         const value = req.body.entry[0].messaging[0];
         console.log(value);
+        if (value.sender.id === "105647745661703") {
+          console.log("SENDER WAS PAGE IT SELF");
+          await Message.updateOne(
+            { id: value.message.mid },
+            { $set: { status: "delivered" } }
+          );
+          const status = {
+            id: value.message.mid,
+            status: "delivered",
+          };
+          io.emit("msgStatus", status);
+          res.sendStatus(200);
+          return;
+        }
         const message = {
           conversationId: value?.sender?.id,
           senderId: value?.sender?.id,
           // senderName: "",
+          id: value?.message?.mid,
           text: value?.message?.text,
           type: "text",
         };
