@@ -7,9 +7,8 @@ const FacebookWebhookRouter = (io) => {
   // getting notification from facebook
   router.post("/", async (req, res) => {
     // Check the Incoming webhook message
-    console.log("Incoming webhook message");
-    // console.log(req.body.changes[0].messaging);
-    // console.log(JSON.stringify(req.body, null, 2));
+    console.log("POST request at /fbpage endpoint");
+    // console.log(req.body);
 
     if (req.body.object === "page") {
       if (
@@ -30,13 +29,26 @@ const FacebookWebhookRouter = (io) => {
           // console.log("Error in saving notification in db");
           console.log(error);
         }
+      } else if (
+        req.body.entry &&
+        req.body.entry[0].messaging &&
+        req.body.entry[0].messaging[0] &&
+        req.body.entry[0].messaging[0]
+      ) {
+        console.log("Message from Facebook Page Webhook");
+        const value = req.body.entry[0].messaging[0];
+        console.log(value);
+        // let message;
+        // io.emit("fbEvents", message);
+        // message = {
+          // conversationId: ,
+          // senderId: ,
+          // senderName: ,
+          // text: ,
+        //   type: "text",
+        // };
       } else {
-        try {
-          console.log(req.body.entry[0].messaging);
-        } catch (error) {
-          console.log("Error in logging");
-          console.log(error);
-        }
+        console.log("Could Match from Facebook Page Webhook");
       }
       res.sendStatus(200);
     } else {
