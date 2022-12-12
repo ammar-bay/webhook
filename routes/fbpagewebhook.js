@@ -22,7 +22,7 @@ const FacebookWebhookRouter = (io) => {
         // const type = req.body.entry[0].changes[0].value.item;
         const value = req.body.entry[0].changes[0].value;
         console.log(value);
-        if (value.sender === "5417462455039861") {
+        if (value.sender === "105647745661703") {
           console.log("SENDER WAS PAGE IT SELF");
           res.sendStatus(200);
           return;
