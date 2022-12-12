@@ -29,7 +29,7 @@ const ConversationSchema = new mongoose.Schema(
     unread: {
       type: Boolean,
     },
-    type: {
+    platform: {
       type: String,
       default: "whatsapp",
     },

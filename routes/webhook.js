@@ -63,7 +63,11 @@ const WhatsappWebhookRouter = (io) => {
         return;
       }
 
-      io.emit("waMessage", { ...message, createdAt: Date.now() });
+      io.emit("waMessage", {
+        ...message,
+        platform: "whatsapp",
+        createdAt: Date.now(),
+      });
 
       try {
         Message.create(message);

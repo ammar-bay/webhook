@@ -1,5 +1,7 @@
 const axios = require("axios");
 const Notification = require("../models/Notification");
+const Message = require("../models/Message");
+const Conversation = require("../models/Conversation");
 
 const FacebookWebhookRouter = (io) => {
   const router = require("express").Router();
@@ -38,15 +40,71 @@ const FacebookWebhookRouter = (io) => {
         console.log("Message from Facebook Page Webhook");
         const value = req.body.entry[0].messaging[0];
         console.log(value);
-        // let message;
-        // io.emit("fbEvents", message);
         const message = {
           conversationId: value?.sender?.id,
           senderId: value?.sender?.id,
-          // senderName: ,
-          // text: ,
+          // senderName: "",
+          text: value.text,
           type: "text",
         };
+
+        io.emit("waMessage", {
+          ...message,
+          platform: "messenger",
+          createdAt: Date.now(),
+        });
+
+        try {
+          Message.create(message);
+          const result = await Conversation.findOne({ id: value?.sender?.id });
+          if (!result) {
+            const conversation = {
+              id: value?.sender?.id,
+              // name: contacts.profile.name,
+              lastmessagetype: value?.text ? "text" : "image",
+              lastmessage: value?.text ? value?.text : "Image",
+              lastmessagetime: Date.now(),
+              lastmessageby: "customer",
+              unread: true,
+              platform: "messenger",
+            };
+            await Conversation.create(conversation);
+          } else {
+            // if (!result.name) {
+            //   await Conversation.updateOne(
+            //     { id: contacts.wa_id },
+            //     {
+            //       $set: {
+            //         name: contacts.profile.name,
+            //         lastmessage: messages?.text ? messages?.text?.body : "Image",
+            //         lastmessagetime: Date.now(),
+            //         lastmessagetype: messages?.text ? "text" : "image",
+            //         lastmessageby: "customer",
+            //         unread: true,
+            //       },
+            //     }
+            //   );
+            // } else {
+            await Conversation.updateOne(
+              { id: value?.sender?.id },
+              {
+                $set: {
+                  lastmessage: value?.text ? value?.text : "Image",
+                  lastmessagetime: Date.now(),
+                  lastmessagetype: value?.text ? "text" : "image",
+                  lastmessageby: "customer",
+                  unread: true,
+                },
+              }
+            );
+            // }
+          }
+          res.sendStatus(200);
+        } catch (error) {
+          console.log(error);
+          console.log("Error in WA Message request");
+          res.sendStatus(500);
+        }
       } else {
         console.log("Could Match from Facebook Page Webhook");
       }
