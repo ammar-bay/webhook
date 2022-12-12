@@ -35,7 +35,7 @@ const FacebookWebhookRouter = (io) => {
         req.body.entry &&
         req.body.entry[0].messaging &&
         req.body.entry[0].messaging[0] &&
-        req.body.entry[0].messaging[0].message.text
+        req.body.entry[0].messaging[0].message?.text
       ) {
         console.log("Message from Facebook Page Webhook");
         const value = req.body.entry[0].messaging[0];
