@@ -35,7 +35,7 @@ const FacebookWebhookRouter = (io) => {
         req.body.entry &&
         req.body.entry[0].messaging &&
         req.body.entry[0].messaging[0] &&
-        req.body.entry[0].messaging[0].text
+        req.body.entry[0].messaging[0].message.text
       ) {
         console.log("Message from Facebook Page Webhook");
         const value = req.body.entry[0].messaging[0];
@@ -44,7 +44,7 @@ const FacebookWebhookRouter = (io) => {
           conversationId: value?.sender?.id,
           senderId: value?.sender?.id,
           // senderName: "",
-          text: value.text,
+          text: value?.message?.text,
           type: "text",
         };
         console.log(message);
@@ -62,8 +62,10 @@ const FacebookWebhookRouter = (io) => {
             const conversation = {
               id: value?.sender?.id,
               // name: contacts.profile.name,
-              lastmessagetype: value?.text ? "text" : "image",
-              lastmessage: value?.text ? value?.text : "Image",
+              lastmessagetype: value?.message?.text ? "text" : "image",
+              lastmessage: value?.message?.text
+                ? value?.message?.text
+                : "Image",
               lastmessagetime: Date.now(),
               lastmessageby: "customer",
               unread: true,
@@ -90,9 +92,11 @@ const FacebookWebhookRouter = (io) => {
               { id: value?.sender?.id },
               {
                 $set: {
-                  lastmessage: value?.text ? value?.text : "Image",
+                  lastmessage: value?.message?.text
+                    ? value?.message?.text
+                    : "Image",
                   lastmessagetime: Date.now(),
-                  lastmessagetype: value?.text ? "text" : "image",
+                  lastmessagetype: value?.message?.text ? "text" : "image",
                   lastmessageby: "customer",
                   unread: true,
                 },
