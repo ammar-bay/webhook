@@ -107,8 +107,8 @@ const FacebookWebhookRouter = (io) => {
         }
       } else {
         console.log("Could Match from Facebook Page Webhook");
+        res.sendStatus(200);
       }
-      res.sendStatus(200);
     } else {
       // Return a '404 Not Found' if event is not from a Facebook API
       res.sendStatus(200);
