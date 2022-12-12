@@ -43,8 +43,8 @@ const FacebookWebhookRouter = (io) => {
         const message = {
           conversationId: value?.sender?.id,
           senderId: value?.sender?.id,
-          senderName: ,
-          text: ,
+          // senderName: ,
+          // text: ,
           type: "text",
         };
       } else {
