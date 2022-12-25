@@ -96,8 +96,8 @@ router.post("/", async (req, res) => {
 
       res.status(200).json(savedMessage);
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: "Something went wrong" });
+      console.log("Something went wrong in Whatsapp: ",error);
+      res.status(500).json({ error: "Something went wrong in Whatapp message" });
     }
   }
   // event for other operators to get this reply
