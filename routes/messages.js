@@ -59,17 +59,29 @@ router.post("/", async (req, res) => {
     const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
 
     // send this message to the receiverId that is the number of the customer
-    const body = `
-    {
-      "messaging_product": "whatsapp",
-      "recipient_type": "individual",
-      "to": "${conversationId}",
-      "type": "text",
-      "text": {
-        "preview_url": false,
-        "body": "${text}"
-      }
-    }`;
+    // const body = `
+    // {
+    //   "messaging_product": "whatsapp",
+    //   "recipient_type": "individual",
+    //   "to": "${conversationId}",
+    //   "type": "text",
+    //   "text": {
+    //     "preview_url": false,
+    //     "body": "${text}"
+    //   }
+    // }`;
+
+    const body = JSON.stringify({
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to: conversationId,
+      type: "text",
+      text: {
+        preview_url: false,
+        body: text,
+      },
+    });
+
     try {
       const result = await axios.post(url, body, {
         headers: { Authorization: token, "Content-Type": "application/json" },
@@ -96,8 +108,11 @@ router.post("/", async (req, res) => {
 
       res.status(200).json(savedMessage);
     } catch (error) {
-      console.log("Something went wrong in Whatsapp: ",error);
-      res.status(500).json({ error: "Something went wrong in Whatapp message" });
+      console.log("Something went wrong in Whatsapp: ", error);
+      res.status(500).json({
+        error: "Something went wrong in Whatapp message",
+        err: error,
+      });
     }
   }
   // event for other operators to get this reply
