@@ -16,14 +16,11 @@ const WhatsappWebhookRouter = (io) => {
       // console.log("Message request");
       // console.log(req.body.entry[0]?.changes[0]?.value);
       const type = req.body.entry[0]?.changes[0]?.value?.messages[0]?.type;
-      const contacts = req.body.entry[0]?.changes[0]?.value.contacts[0];
-      const messages = req.body.entry[0]?.changes[0]?.value.messages[0];
-      console.log(messages);
-
-      /////////////////////////////////////
+      const contacts = req.body.entry[0]?.changes[0]?.value?.contacts[0];
+      const messages = req.body.entry[0]?.changes[0]?.value?.messages[0];
+      console.log(contacts);
 
       /////////////////////////////////////////////
-
       let message;
       if (type === "text") {
         
@@ -67,7 +64,11 @@ const WhatsappWebhookRouter = (io) => {
         return;
       }
 
-      io.emit("waMessage", { ...message, createdAt: Date.now() });
+      io.emit("waMessage", {
+        ...message,
+        platform: "whatsapp",
+        createdAt: Date.now(),
+      });
 
       try {
         Message.create(message);
