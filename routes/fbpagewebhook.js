@@ -40,7 +40,7 @@ const FacebookWebhookRouter = (io) => {
       ) {
         console.log("Message from Facebook Page Webhook");
         const value = req.body.entry[0].messaging[0];
-        console.log(JSON.stringify(value));
+        console.log(JSON.stringify(req.body));
         if (value.sender.id === "105647745661703") {
           console.log("SENDER WAS PAGE IT SELF");
           await Message.updateOne(
@@ -128,7 +128,7 @@ const FacebookWebhookRouter = (io) => {
         }
       } else {
         console.log("Could Match from Facebook Page Webhook");
-        console.log(req.body.entry[0]?.changes[0]?.messaging[0]);
+        // console.log(req.body.entry[0]?.changes[0]?.messaging[0]);
         res.sendStatus(200);
       }
     } else {
