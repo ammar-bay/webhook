@@ -23,6 +23,7 @@ const WhatsappWebhookRouter = (io) => {
       /////////////////////////////////////////////
       let message;
       if (type === "text") {
+        
         // if (messages?.text) {
         message = {
           conversationId: contacts.wa_id,

@@ -8,8 +8,10 @@ const FacebookWebhookRouter = (io) => {
 
   // getting notification from facebook
   router.post("/", async (req, res) => {
+    console.log("POST request to /fbpagewebhook");
     // Check the Incoming webhook message
-    console.log("POST request at /fbpage endpoint");
+
+console.log("POST request at /fbpage endpoint");
     // console.log(req.body);
 
     if (req.body.object === "page") {
