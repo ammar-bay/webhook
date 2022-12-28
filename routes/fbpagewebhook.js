@@ -23,8 +23,6 @@ const FacebookWebhookRouter = (io) => {
         console.log("Facebook Page");
         const value = req.body.entry[0].changes[0].value;
         console.log(value);
-
-        console.log("Notification from Facebook Page Webhook");
         io.emit("fbEvents", value);
         try {
           const notify = await Notification.create(value);
@@ -90,21 +88,6 @@ const FacebookWebhookRouter = (io) => {
             };
             await Conversation.create(conversation);
           } else {
-            // if (!result.name) {
-            //   await Conversation.updateOne(
-            //     { id: contacts.wa_id },
-            //     {
-            //       $set: {
-            //         name: contacts.profile.name,
-            //         lastmessage: messages?.text ? messages?.text?.body : "Image",
-            //         lastmessagetime: Date.now(),
-            //         lastmessagetype: messages?.text ? "text" : "image",
-            //         lastmessageby: "customer",
-            //         unread: true,
-            //       },
-            //     }
-            //   );
-            // } else {
             await Conversation.updateOne(
               { id: value?.sender?.id },
               {
@@ -119,23 +102,22 @@ const FacebookWebhookRouter = (io) => {
                 },
               }
             );
-            // }
           }
           res.sendStatus(200);
         } catch (error) {
-          console.log(error);
           console.log("Error in WA Message request");
+          // console.log(error);
           res.sendStatus(500);
         }
       } else {
         console.log("Could Match from Facebook Page Webhook");
-        // console.log(req.body.entry[0]?.changes[0]?.messaging[0]);
+        console.log(JSON.stringify(req.body));
         res.sendStatus(200);
       }
     } else {
       // Return a '404 Not Found' if event is not from a Facebook API
-      res.sendStatus(200);
-      // res.sendStatus(404);
+      console.log("Not from Facebook Page Webhook");
+      res.sendStatus(404);
     }
   });
 
