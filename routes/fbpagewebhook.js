@@ -27,9 +27,11 @@ const FacebookWebhookRouter = (io) => {
         try {
           const notify = await Notification.create(value);
           // console.log(notify);
+          res.sendStatus(200);
         } catch (error) {
           // console.log("Error in saving notification in db");
           console.log(error);
+          res.sendStatus(500);
         }
       } else if (
         req.body.entry &&
