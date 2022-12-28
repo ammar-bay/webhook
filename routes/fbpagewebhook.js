@@ -76,9 +76,22 @@ const FacebookWebhookRouter = (io) => {
           Message.create(message);
           const result = await Conversation.findOne({ id: value?.sender?.id });
           if (!result) {
+            let username = "";
+            try {
+              const userdetails = await axios.get(
+                `https://graph.facebook.com/v2.6/${value?.sender?.id}?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`
+              );
+              username =
+                userdetails?.data?.first_name +
+                " " +
+                userdetails?.data?.last_name;
+            } catch (error) {
+              console.log("Error in getting user details");
+              // console.log(error);
+            }
             const conversation = {
               id: value?.sender?.id,
-              // name: contacts.profile.name,
+              name: username,
               lastmessagetype: value?.message?.text ? "text" : "image",
               lastmessage: value?.message?.text
                 ? value?.message?.text
