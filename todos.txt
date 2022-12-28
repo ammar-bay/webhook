@@ -29,10 +29,28 @@ req.body.entry[0].messaging[0] = {
     recipient: { id: '105647745661703' },
     timestamp: 1670853051809,
     message: {
-    mid: 'm_V2X2EjDjc3sMTLe1HmEp2oXhtpzUA6GHSMGyQRFzy0jump3CLvRbukNOkTnJER5gkUP3YD8_ZmICUR2XF-r-wg',
-    text: 'ok'
+        mid: 'm_V2X2EjDjc3sMTLe1HmEp2oXhtpzUA6GHSMGyQRFzy0jump3CLvRbukNOkTnJER5gkUP3YD8_ZmICUR2XF-r-wg',
+        text: 'ok'
+    }
 }
 
+req.body = {
+    "object":"page",
+    "entry":[
+        {
+            "id":"120047298857053",
+            "time":1672217385123,
+            "messaging":[
+                {
+                    "sender":{"id":"8073788526024481"},
+                    "recipient":{"id":"120047298857053"},
+                    "timestamp":1672217387020,
+                    "read":{"watermark":1672217385409}
+                }
+            ]
+        }
+    ]
+}
 
 Dec 28th:
 Write a user guide

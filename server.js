@@ -12,8 +12,7 @@ const postRoute = require("./routes/posts");
 const notificationRoute = require("./routes/notifications");
 const conversationRoute = require("./routes/conversations");
 const webhookRoute = require("./routes/webhook");
-const fbpagewebhookRoute = require("./routes/fbpagewebhook");
-const fbmessengerwebhookRoute = require("./routes/fbmessengerwebhook");
+const fbwebhookRoute = require("./routes/fbpagewebhook");
 const messageRoute = require("./routes/messages");
 // const credentials = require("./middleware/credentials");
 // const corsOptions = require("./config/corsOptions");
@@ -94,8 +93,7 @@ app.use("/conversations", conversationRoute(io));
 
 // webhooks
 app.use("/webhook", webhookRoute(io));
-app.use("/fbpage", fbpagewebhookRoute(io));
-app.use("/fbmessenger", fbmessengerwebhookRoute(io));
+app.use("/fbwebhook", fbwebhookRoute(io));
 
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
