@@ -8,10 +8,8 @@ const FacebookWebhookRouter = (io) => {
 
   // getting notification from facebook
   router.post("/", async (req, res) => {
-    console.log("POST request to /fbpagewebhook");
     // Check the Incoming webhook message
-
-console.log("POST request at /fbpage endpoint");
+    console.log("POST request at /fbpage endpoint");
     // console.log(req.body);
 
     if (req.body.object === "page") {
@@ -22,6 +20,7 @@ console.log("POST request at /fbpage endpoint");
         req.body.entry[0].changes[0].value.item
       ) {
         // const type = req.body.entry[0].changes[0].value.item;
+        console.log("Facebook Page");
         const value = req.body.entry[0].changes[0].value;
         console.log(value);
 
@@ -40,9 +39,9 @@ console.log("POST request at /fbpage endpoint");
         req.body.entry[0].messaging[0] &&
         req.body.entry[0].messaging[0].message?.text
       ) {
-        console.log("Message from Facebook Page Webhook");
+        console.log("Facebook Messenger");
         const value = req.body.entry[0].messaging[0];
-        console.log(JSON.stringify(req.body));
+        console.log(value);
         if (value.sender.id === "105647745661703") {
           console.log("SENDER WAS PAGE IT SELF");
           await Message.updateOne(
