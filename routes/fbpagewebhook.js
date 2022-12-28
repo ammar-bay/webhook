@@ -22,7 +22,7 @@ const FacebookWebhookRouter = (io) => {
         // const type = req.body.entry[0].changes[0].value.item;
         console.log("Facebook Page");
         const value = req.body.entry[0].changes[0].value;
-        console.log(value);
+        // console.log(value);
         io.emit("fbEvents", value);
         try {
           const notify = await Notification.create(value);
