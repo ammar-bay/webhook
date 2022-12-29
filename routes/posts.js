@@ -6,7 +6,7 @@ const axios = require("axios");
 router.get("/", async (req, res) => {
   try {
     const result = await axios.get(
-      `https://graph.facebook.com/${process.env.FB_AL_NAFI_PAGE_ID}/posts?access_token=${process.env.FB_AL_NAFI_PAGE_ACCESS_TOKEN}`
+      `https://graph.facebook.com/${process.env.FB_PAGE_ID}/posts?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`
     );
     res.status(200).json(result.data);
   } catch (err) {

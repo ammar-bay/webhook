@@ -134,16 +134,16 @@ router.post("/numbers", async (req, res) => {
   const result = await Promise.all(
     cleanedData.map(async (item) => {
       const receiverId = item.Number.replace("\r", "");
-      const body = `{
-        "messaging_product": "whatsapp",
-        "to": ${receiverId},
-        "type": "template",
-        "template": { "name": "${template}", "language": { "code": "en_US" } }
-      }`;
+      const body = {
+        messaging_product: "whatsapp",
+        to: receiverId,
+        type: "template",
+        template: { name: template, language: { code: "en_US" } },
+      };
       // can use promise.all here
       try {
         //send the (template) message to customer
-        const result = await axios.post(url, body, {
+        const result = await axios.post(url, JSON.stringify(body), {
           headers: { Authorization: token, "Content-Type": "application/json" },
         });
 

@@ -29,7 +29,7 @@ router.post("/:id/reply", async (req, res) => {
 
   try {
     const result = await axios.post(
-      `https://graph.facebook.com/${req.params.id}/comments?access_token=${process.env.FB_AL_NAFI_PAGE_ACCESS_TOKEN}`,
+      `https://graph.facebook.com/${req.params.id}/comments?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`,
       {
         message: req.body.msg,
       }

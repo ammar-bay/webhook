@@ -8,10 +8,8 @@ const FacebookWebhookRouter = (io) => {
 
   // getting notification from facebook
   router.post("/", async (req, res) => {
-    console.log("POST request to /fbpagewebhook");
     // Check the Incoming webhook message
-
-console.log("POST request at /fbpage endpoint");
+    console.log("POST request at /fb endpoint");
     // console.log(req.body);
 
     if (req.body.object === "page") {
@@ -22,17 +20,18 @@ console.log("POST request at /fbpage endpoint");
         req.body.entry[0].changes[0].value.item
       ) {
         // const type = req.body.entry[0].changes[0].value.item;
+        console.log("Facebook Page");
         const value = req.body.entry[0].changes[0].value;
-        console.log(value);
-
-        console.log("Notification from Facebook Page Webhook");
+        // console.log(value);
         io.emit("fbEvents", value);
         try {
           const notify = await Notification.create(value);
           // console.log(notify);
+          res.sendStatus(200);
         } catch (error) {
           // console.log("Error in saving notification in db");
           console.log(error);
+          res.sendStatus(500);
         }
       } else if (
         req.body.entry &&
@@ -40,9 +39,9 @@ console.log("POST request at /fbpage endpoint");
         req.body.entry[0].messaging[0] &&
         req.body.entry[0].messaging[0].message?.text
       ) {
-        console.log("Message from Facebook Page Webhook");
+        console.log("Facebook Messenger");
         const value = req.body.entry[0].messaging[0];
-        console.log(JSON.stringify(req.body));
+        console.log(value);
         if (value.sender.id === "105647745661703") {
           console.log("SENDER WAS PAGE IT SELF");
           await Message.updateOne(
@@ -77,9 +76,22 @@ console.log("POST request at /fbpage endpoint");
           Message.create(message);
           const result = await Conversation.findOne({ id: value?.sender?.id });
           if (!result) {
+            let username = "";
+            try {
+              const userdetails = await axios.get(
+                `https://graph.facebook.com/v2.6/${value?.sender?.id}?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`
+              );
+              username =
+                userdetails?.data?.first_name +
+                " " +
+                userdetails?.data?.last_name;
+            } catch (error) {
+              console.log("Error in getting user details");
+              // console.log(error);
+            }
             const conversation = {
               id: value?.sender?.id,
-              // name: contacts.profile.name,
+              name: username,
               lastmessagetype: value?.message?.text ? "text" : "image",
               lastmessage: value?.message?.text
                 ? value?.message?.text
@@ -91,21 +103,6 @@ console.log("POST request at /fbpage endpoint");
             };
             await Conversation.create(conversation);
           } else {
-            // if (!result.name) {
-            //   await Conversation.updateOne(
-            //     { id: contacts.wa_id },
-            //     {
-            //       $set: {
-            //         name: contacts.profile.name,
-            //         lastmessage: messages?.text ? messages?.text?.body : "Image",
-            //         lastmessagetime: Date.now(),
-            //         lastmessagetype: messages?.text ? "text" : "image",
-            //         lastmessageby: "customer",
-            //         unread: true,
-            //       },
-            //     }
-            //   );
-            // } else {
             await Conversation.updateOne(
               { id: value?.sender?.id },
               {
@@ -120,23 +117,22 @@ console.log("POST request at /fbpage endpoint");
                 },
               }
             );
-            // }
           }
           res.sendStatus(200);
         } catch (error) {
-          console.log(error);
           console.log("Error in WA Message request");
+          // console.log(error);
           res.sendStatus(500);
         }
       } else {
         console.log("Could Match from Facebook Page Webhook");
-        // console.log(req.body.entry[0]?.changes[0]?.messaging[0]);
+        console.log(JSON.stringify(req.body));
         res.sendStatus(200);
       }
     } else {
       // Return a '404 Not Found' if event is not from a Facebook API
-      res.sendStatus(200);
-      // res.sendStatus(404);
+      console.log("Not from Facebook Page Webhook");
+      res.sendStatus(404);
     }
   });
 

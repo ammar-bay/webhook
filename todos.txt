@@ -1,70 +1,62 @@
 Overall:
     Post to every platform
     mobile layout
+    add authentication using aws
+    change the prod database to AWS
+    ring on new msg
+    refactor the code frontend and backend
+    add signout functionality
 
-Whatsapp:
-    how to get template message
+Whatsapp & Messenger:
     how to add operators to conversation members
-    add new message symbol to each new conversation
-    sent delivered and seen events ticks
+    msg send on enter
+    search customer by name or number
+    add members to conversation
+    expiration date of conversation - dont allow to send msg after that can just send template message
+    toast on new msg sent template
+    time of msg
+    when user sends a voice msg
+    react on messages
+    Need to keep track of total conversations for month
 
-Facebook:
+Facebook Page:
     all cards should have checked/seen button
-    comments cards should have reply button and reply should be shown on that card
-    item photo: check the icoming properties and include that in the notification schema
+    pagination
 
-
-if not login redirect to login
-change the prod database in mongo for now
-
-add authentication using aws
-change the prod database to AWS
-
-
-link fb notification card to post
-filter type viewed/unviewed recent
-ring on new msg
-nested comments on fb feed
-pagination
-name on whatsapp number after 1st reply
-fb notification photo type changes in schema as well
-msg send on enter
-add signout functionality
-
-bugs:
-sort conversation by last message
-add new message symbol to each new conversation
-sent delivered and seen events ticks to eash message
-currentchat highlight
-search customer by name or number
-filter by unread
-add members to conversation
-
-expiration date of conversation - dont allow to send msg after that can just send template message
-toast on new msg sent template
-time
-
-when user sends a voice msg
-react on messages
-
-Need to keep track of total conversations for month
-
-Next Steps:
-
-Make a separate dev and production enviroment
-Prod:
-    UC AlNafi Facebook Developers App
-    AlNafi Official Facebook Page
-    AlNafi Whatsapp Number
-Dev:
-    Unified Chat Facebook Developers App
-
-
+messenger messgage body
 req.body.entry[0].messaging[0] = {
     sender: { id: '5417462455039861' },
     recipient: { id: '105647745661703' },
     timestamp: 1670853051809,
     message: {
-    mid: 'm_V2X2EjDjc3sMTLe1HmEp2oXhtpzUA6GHSMGyQRFzy0jump3CLvRbukNOkTnJER5gkUP3YD8_ZmICUR2XF-r-wg',
-    text: 'ok'
+        mid: 'm_V2X2EjDjc3sMTLe1HmEp2oXhtpzUA6GHSMGyQRFzy0jump3CLvRbukNOkTnJER5gkUP3YD8_ZmICUR2XF-r-wg',
+        text: 'ok'
+    }
 }
+
+req.body = {
+    "object":"page",
+    "entry":[
+        {
+            "id":"120047298857053",
+            "time":1672217385123,
+            "messaging":[
+                {
+                    "sender":{"id":"8073788526024481"},
+                    "recipient":{"id":"120047298857053"},
+                    "timestamp":1672217387020,
+                    "read":{"watermark":1672217385409}
+                }
+            ]
+        }
+    ]
+}
+
+Dec 28th:
+Write a user guide
+Send template mesage from csv file:
+    clean the data
+    view the csv
+    view successful and unsuccessful messages
+    download the csv with successful and unsuccessful messages    
+Messenger messages
