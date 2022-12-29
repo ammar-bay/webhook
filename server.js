@@ -12,15 +12,14 @@ const postRoute = require("./routes/posts");
 const notificationRoute = require("./routes/notifications");
 const conversationRoute = require("./routes/conversations");
 const webhookRoute = require("./routes/webhook");
-const fbpagewebhookRoute = require("./routes/fbpagewebhook");
+const fbwebhookRoute = require("./routes/fbpagewebhook");
 const messageRoute = require("./routes/messages");
-const credentials = require("./middleware/credentials");
-const corsOptions = require("./config/corsOptions");
+// const credentials = require("./middleware/credentials");
+// const corsOptions = require("./config/corsOptions");
 
 const PORT = process.env.PORT || 8900;
 
 dotenv.config();
-
 
 const io = require("socket.io")(server, {
   cors: {
@@ -49,6 +48,7 @@ io.on("connection", (socket) => {
 });
 
 // dev db
+
 // const DB = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatcluster.9mbke.mongodb.net/?retryWrites=true&w=majority`;
 
 const DB =
@@ -94,7 +94,7 @@ app.use("/conversations", conversationRoute(io));
 
 // webhooks
 app.use("/webhook", webhookRoute(io));
-app.use("/fbpage", fbpagewebhookRoute(io));
+app.use("/fbwebhook", fbwebhookRoute(io));
 
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");

@@ -7,51 +7,114 @@ const { parse } = require("csv-parse");
 // Operator replies to a message
 router.post("/", async (req, res) => {
   const { senderId, conversationId, text, senderName } = req.body;
-  const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
-  const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
-
-  // send this message to the receiverId that is the number of the customer
-  const body = `
-    {
-      "messaging_product": "whatsapp",
-      "recipient_type": "individual",
-      "to": "${conversationId}",
-      "type": "text",
-      "text": {
-        "preview_url": false,
-        "body": "${text}"
-      }
-    }`;
-  try {
-    const result = await axios.post(url, body, {
-      headers: { Authorization: token, "Content-Type": "application/json" },
-    });
-    // console.log(result.data.messages[0].id);
-    const newMessage = new Message({
-      ...req.body,
-      id: result.data.messages[0].id,
-    });
-    const savedMessage = await newMessage.save();
-    await Conversation.updateOne(
-      { id: conversationId },
-      {
-        $set: {
-          lastmessage: text,
-          lastmessagetime: Date.now(),
-          lastmessagetype: "text",
-          lastmessageby: senderName,
-          unread: false,
+  if (req.body.platform === "messenger") {
+    console.log("Messenger");
+    const url = `https://graph.facebook.com/v15.0/me/messages?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`;
+    const body = {
+      recipient: {
+        id: conversationId,
+      },
+      message: {
+        text,
+      },
+    };
+    try {
+      const result = await axios.post(url, body, {
+        headers: {
+          // Authorization: token,
+          "Content-Type": "application/json",
         },
-        $addToSet: { members: senderId },
-      }
-    );
+      });
+      console.log(result.data);
+      const newMessage = new Message({
+        ...req.body,
+        id: result.data.message_id,
+      });
+      const savedMessage = await newMessage.save();
+      await Conversation.updateOne(
+        { id: conversationId },
+        {
+          $set: {
+            lastmessage: text,
+            lastmessagetime: Date.now(),
+            lastmessagetype: "text",
+            lastmessageby: senderName,
+            unread: false,
+          },
+          $addToSet: { members: senderId },
+        }
+      );
 
-    res.status(200).json(savedMessage);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Something went wrong" });
+      res.status(200).json(savedMessage);
+
+      // return res.status(200).json({ message: "Message sent" });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Something went wrong" });
+    }
+  } else if (req.body.platform === "whatsapp") {
+    console.log("Whatsapp");
+
+    const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
+    const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
+
+    // send this message to the receiverId that is the number of the customer
+    // const body = `
+    // {
+    //   "messaging_product": "whatsapp",
+    //   "recipient_type": "individual",
+    //   "to": "${conversationId}",
+    //   "type": "text",
+    //   "text": {
+    //     "preview_url": false,
+    //     "body": "${text}"
+    //   }
+    // }`;
+
+    const body = JSON.stringify({
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to: conversationId,
+      type: "text",
+      text: {
+        preview_url: false,
+        body: text,
+      },
+    });
+
+    try {
+      const result = await axios.post(url, body, {
+        headers: { Authorization: token, "Content-Type": "application/json" },
+      });
+      // console.log(result.data.messages[0].id);
+      const newMessage = new Message({
+        ...req.body,
+        id: result.data.messages[0].id,
+      });
+      const savedMessage = await newMessage.save();
+      await Conversation.updateOne(
+        { id: conversationId },
+        {
+          $set: {
+            lastmessage: text,
+            lastmessagetime: Date.now(),
+            lastmessagetype: "text",
+            lastmessageby: senderName,
+            unread: false,
+          },
+          $addToSet: { members: senderId },
+        }
+      );
+
+      res.status(200).json(savedMessage);
+    } catch (error) {
+      console.log("Something went wrong in Whatsapp: ", error);
+      res.status(500).json({
+        error: "Something went wrong in Whatapp message",
+        err: error,
+      });
+    }
   }
-
   // event for other operators to get this reply
   // io.emit("oMessage", {
   //   senderId,
@@ -71,16 +134,16 @@ router.post("/numbers", async (req, res) => {
   const result = await Promise.all(
     cleanedData.map(async (item) => {
       const receiverId = item.Number.replace("\r", "");
-      const body = `{
-        "messaging_product": "whatsapp",
-        "to": ${receiverId},
-        "type": "template",
-        "template": { "name": "${template}", "language": { "code": "en_US" } }
-      }`;
+      const body = {
+        messaging_product: "whatsapp",
+        to: receiverId,
+        type: "template",
+        template: { name: template, language: { code: "en_US" } },
+      };
       // can use promise.all here
       try {
         //send the (template) message to customer
-        const result = await axios.post(url, body, {
+        const result = await axios.post(url, JSON.stringify(body), {
           headers: { Authorization: token, "Content-Type": "application/json" },
         });
 
@@ -109,7 +172,7 @@ router.post("/numbers", async (req, res) => {
         console.log("Message sent successfully to: ", receiverId);
         return receiverId;
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         console.log("Message unsuccessful to: ", receiverId);
         // res.status(500).json({ error: "Something went wrong" });
         return receiverId;
@@ -117,9 +180,9 @@ router.post("/numbers", async (req, res) => {
     })
   );
 
-  result.forEach((item) => {
-    console.log(item);
-  });
+  // result.forEach((item) => {
+  //   console.log(item);
+  // });
   res.status(200).json(result);
 });
 
