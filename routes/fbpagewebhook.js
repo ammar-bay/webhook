@@ -81,6 +81,7 @@ const FacebookWebhookRouter = (io) => {
               const userdetails = await axios.get(
                 `https://graph.facebook.com/v2.6/${value?.sender?.id}?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`
               );
+              console.log(userdetails);
               username =
                 userdetails?.data?.first_name +
                 " " +
