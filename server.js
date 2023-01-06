@@ -12,6 +12,7 @@ const postRoute = require("./routes/posts");
 const notificationRoute = require("./routes/notifications");
 const conversationRoute = require("./routes/conversations");
 const webhookRoute = require("./routes/webhook");
+const instawebhookRoute = require("./routes/instagramwebhook");
 const fbwebhookRoute = require("./routes/fbpagewebhook");
 const messageRoute = require("./routes/messages");
 const cognitoAuth = require("./middleware/cognitoAuth");
@@ -84,6 +85,11 @@ app.use((req, res, next) => {
 app.use(credentials);
 app.use(cors(corsOptions));
 
+// webhooks
+app.use("/webhook", webhookRoute(io));
+app.use("/fbwebhook", fbwebhookRoute(io));
+app.use("/instagram", instawebhookRoute(io));
+
 // Verify JWT token
 app.use(cognitoAuth.getVerifyMiddleware());
 // Routes
@@ -94,9 +100,6 @@ app.use("/messages", messageRoute);
 app.use("/notifications", notificationRoute);
 app.use("/conversations", conversationRoute(io));
 
-// webhooks
-app.use("/webhook", webhookRoute(io));
-app.use("/fbwebhook", fbwebhookRoute(io));
 
 app.use("/", rootRoute);
 mongoose.connection.once("open", () => {

@@ -43,4 +43,4 @@ const InstagramWebhookRouter = (io) => {
   });
   return router;
 };
-module.exports = FacebookWebhookRouter;
+module.exports = InstagramWebhookRouter;
