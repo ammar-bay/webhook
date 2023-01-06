@@ -14,8 +14,9 @@ const conversationRoute = require("./routes/conversations");
 const webhookRoute = require("./routes/webhook");
 const fbwebhookRoute = require("./routes/fbpagewebhook");
 const messageRoute = require("./routes/messages");
-// const credentials = require("./middleware/credentials");
-// const corsOptions = require("./config/corsOptions");
+const cognitoAuth = require("./middleware/cognitoAuth");
+const credentials = require("./middleware/credentials");
+const corsOptions = require("./config/corsOptions");
 
 const PORT = process.env.PORT || 8900;
 
@@ -79,12 +80,13 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
-app.use(cors());
-// app.use(credentials)
-// app.use(cors(corsOptions));
+// app.use(cors());
+app.use(credentials);
+app.use(cors(corsOptions));
 
+// Verify JWT token
+app.use(cognitoAuth.getVerifyMiddleware());
 // Routes
-app.use("/", rootRoute);
 app.use("/auth", authRoute);
 app.use("/users", userRoute);
 app.use("/posts", postRoute);
@@ -96,6 +98,7 @@ app.use("/conversations", conversationRoute(io));
 app.use("/webhook", webhookRoute(io));
 app.use("/fbwebhook", fbwebhookRoute(io));
 
+app.use("/", rootRoute);
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
   // app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
