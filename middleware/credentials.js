@@ -2,7 +2,7 @@ const allowedOrigins = require("../config/allowedOrigins");
 
 const credentials = (req, res, next) => {
   const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin.toString())) {
+  if (origin && allowedOrigins.includes(origin.toString())) {
     // console.log("Allowed origin: ", origin);
     res.header("Access-Control-Allow-Credentials", true);
   } else {
