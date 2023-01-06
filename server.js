@@ -100,7 +100,6 @@ app.use("/messages", messageRoute);
 app.use("/notifications", notificationRoute);
 app.use("/conversations", conversationRoute(io));
 
-
 app.use("/", rootRoute);
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
