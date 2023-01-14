@@ -71,7 +71,6 @@ const WhatsappWebhookRouter = (io) => {
         platform: "whatsapp",
         createdAt: Date.now(),
       });
-
       try {
         Message.create({
           conversation_id: message.conversationId,
