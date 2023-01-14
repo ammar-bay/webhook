@@ -12,6 +12,7 @@ const WhatsappWebhookRouter = (io) => {
     // check type of incoming the incoming request
     // Message request
     // console.log(req.body);
+    console.log(JSON.stringify(req.body));
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
       // console.log("Message request");
       // console.log(req.body.entry[0]?.changes[0]?.value);
