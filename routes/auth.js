@@ -37,7 +37,7 @@ router.post("/register", async (req, res) => {
     async (err, data) => {
       if (err) {
         console.error(err);
-        res.status(500).json("Sign up failed");
+        res.status(500).json(err);
       } else {
         // console.log(data);
         const salt = await bcrypt.genSalt(10);

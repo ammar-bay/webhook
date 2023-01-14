@@ -1,6 +1,9 @@
 const axios = require("axios");
-const Message = require("../models/Message");
-const Conversation = require("../models/Conversation");
+// const Message = require("../models/Message");
+// const Conversation = require("../models/Conversation");
+const db = require("../models");
+const Message = db.Message;
+const Conversation = db.Conversation;
 
 const WhatsappWebhookRouter = (io) => {
   const router = require("express").Router();
@@ -11,19 +14,18 @@ const WhatsappWebhookRouter = (io) => {
     // console.log(JSON.stringify(req.body, null, 2));
     // check type of incoming the incoming request
     // Message request
-    // console.log(req.body);
+    // console.log(JSON.stringify(req.body));
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
       // console.log("Message request");
       // console.log(req.body.entry[0]?.changes[0]?.value);
       const type = req.body.entry[0]?.changes[0]?.value?.messages[0]?.type;
       const contacts = req.body.entry[0]?.changes[0]?.value?.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value?.messages[0];
-      console.log(contacts);
+      // console.log(contacts);
 
       /////////////////////////////////////////////
       let message;
       if (type === "text") {
-        
         // if (messages?.text) {
         message = {
           conversationId: contacts.wa_id,
@@ -71,7 +73,13 @@ const WhatsappWebhookRouter = (io) => {
       });
 
       try {
-        Message.create(message);
+        Message.create({
+          conversation_id: message.conversationId,
+          user_id: message.senderId,
+          // mid: messages?.id,
+          type: message.type,
+          content: message.type === "text" ? message.text : message.img,
+        });
         const result = await Conversation.findOne({ id: contacts.wa_id });
         // const result = await Conversation.exists({ id: contacts.wa_id });
         if (!result) {

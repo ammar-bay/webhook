@@ -87,12 +87,12 @@ app.use(credentials);
 app.use(cors(corsOptions));
 
 // webhooks
-// app.use("/webhook", webhookRoute(io));
-// app.use("/fbwebhook", fbwebhookRoute(io));
+app.use("/webhook", webhookRoute(io));
+app.use("/fbwebhook", fbwebhookRoute(io));
 // app.use("/instagram", instawebhookRoute(io));
 
 // Verify JWT token
-// app.use(cognitoAuth.getVerifyMiddleware());
+app.use(cognitoAuth.getVerifyMiddleware());
 // Routes
 app.use("/auth", authRoute);
 // app.use("/users", userRoute);
