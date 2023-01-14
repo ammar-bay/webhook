@@ -1,6 +1,6 @@
 const router = require("express").Router();
 // const User = require("../models");
-// const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const db = require("../models");
 const User = db.User;
 const awsCognito = require("amazon-cognito-identity-js");
@@ -40,10 +40,13 @@ router.post("/register", async (req, res) => {
         res.status(500).json("Sign up failed");
       } else {
         // console.log(data);
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         await User.create({
           username,
           email,
-          password,
+          hashedPassword,
           role,
           id: data.userSub,
         });
