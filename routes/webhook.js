@@ -75,7 +75,7 @@ const WhatsappWebhookRouter = (io) => {
       try {
         Message.create({
           conversation_id: message.conversationId,
-          user_id: message.senderId,
+          user_id: null,
           mid: messages.id,
           type: message.type,
           content: message.type === "text" ? message.text : message.img,
