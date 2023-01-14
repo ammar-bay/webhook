@@ -76,52 +76,54 @@ const WhatsappWebhookRouter = (io) => {
         Message.create({
           conversation_id: message.conversationId,
           user_id: message.senderId,
-          // mid: messages?.id,
+          mid: messages.id,
           type: message.type,
           content: message.type === "text" ? message.text : message.img,
         });
-        const result = await Conversation.findOne({ id: contacts.wa_id });
+        const result = await Conversation.findOne({
+          where: { id: contacts.wa_id },
+        });
+        // const result = await Conversation.findOne({ id: contacts.wa_id });
         // const result = await Conversation.exists({ id: contacts.wa_id });
         if (!result) {
           const conversation = {
             id: contacts.wa_id,
             name: contacts.profile.name,
-            last_message_type: messages?.text ? "text" : "image",
-            last_message: messages?.text ? messages?.text?.body : "Image",
+            last_message_type: messages?.type,
+            last_message: message.type === "text" ? message.text : "Image",
             last_message_time: Date.now(),
-            lastmessageby: "customer",
+            // lastmessageby: "customer",
+            platform: "whatsapp",
             unread: true,
           };
           await Conversation.create(conversation);
         } else {
-          if (!result.name) {
-            await Conversation.updateOne(
-              { id: contacts.wa_id },
-              {
-                $set: {
-                  name: contacts.profile.name,
-                  last_message: messages?.text ? messages?.text?.body : "Image",
-                  last_message_time: Date.now(),
-                  last_message_type: messages?.text ? "text" : "image",
-                  lastmessageby: "customer",
-                  unread: true,
-                },
-              }
-            );
-          } else {
-            await Conversation.updateOne(
-              { id: contacts.wa_id },
-              {
-                $set: {
-                  last_message: messages?.text ? messages?.text?.body : "Image",
-                  last_message_time: Date.now(),
-                  last_message_type: messages?.text ? "text" : "image",
-                  lastmessageby: "customer",
-                  unread: true,
-                },
-              }
-            );
-          }
+          // if (!result.name) {
+          await Conversation.update(
+            {
+              name: contacts.profile.name,
+              last_message: messages?.text ? messages?.text?.body : "Image",
+              last_message_time: Date.now(),
+              last_message_type: messages?.text ? "text" : "image",
+              // lastmessageby: "customer",
+              unread: true,
+            },
+            { where: { id: contacts.wa_id } }
+          );
+          // } else {
+          //   await Conversation.updateOne(
+          //     { id: contacts.wa_id },
+          //     {
+          //       $set: {
+          //         last_message: messages?.text ? messages?.text?.body : "Image",
+          //         last_message_time: Date.now(),
+          //         last_message_type: messages?.text ? "text" : "image",
+          //         lastmessageby: "customer",
+          //         unread: true,
+          //       },
+          //     }
+          //   );
+          // }
         }
         res.sendStatus(200);
       } catch (error) {
@@ -135,13 +137,11 @@ const WhatsappWebhookRouter = (io) => {
       console.log("Message status request");
       // console.log(req.body);
       const status = req.body.entry[0]?.changes[0]?.value?.statuses[0];
-      await Message.updateOne(
-        { id: status.id },
+      await Message.update(
         {
-          $set: {
-            status: status.status,
-          },
-        }
+          status: status.status,
+        },
+        { where: { mid: status.id } }
       );
       io.emit("msgStatus", status);
       res.sendStatus(200);

@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       // 0: active, 1: inactive (deleted) 2: blocked
       status: {
         type: DataTypes.STRING,
+        defaultValue: "active",
       },
       // createdAt: {
       //   type: DataTypes.DATE,

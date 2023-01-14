@@ -22,7 +22,7 @@ const FacebookWebhookRouter = (io) => {
         req.body.entry[0].changes[0].value.item
       ) {
         // // const type = req.body.entry[0].changes[0].value.item;
-        // console.log("Facebook Page");
+        console.log("Facebook Page");
         // const value = req.body.entry[0].changes[0].value;
         // // console.log(value);
         // io.emit("fbEvents", value);
@@ -110,25 +110,25 @@ const FacebookWebhookRouter = (io) => {
                 ? value?.message?.text
                 : "Image",
               last_message_time: Date.now(),
-              lastmessageby: "customer",
+              // lastmessageby: "customer",
               unread: true,
               platform: "messenger",
             };
             await Conversation.create(conversation);
           } else {
-            await Conversation.updateOne(
-              { id: value?.sender?.id },
+            await Conversation.update(
               {
-                $set: {
+                // $set: {
                   last_message: value?.message?.text
                     ? value?.message?.text
                     : "Image",
                   last_message_time: Date.now(),
                   last_message_type: value?.message?.text ? "text" : "image",
-                  lastmessageby: "customer",
+                  // lastmessageby: "customer",
                   unread: true,
-                },
-              }
+                // },
+              },
+              { where: { id: value?.sender?.id } }
             );
           }
           res.sendStatus(200);
