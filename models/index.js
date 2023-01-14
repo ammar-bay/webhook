@@ -8,7 +8,8 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/../config/config.json")[env];
 const db = {};
-const db_password = env === "development" ? config?.password : process.env.DB_PASSWORD
+const db_password =
+  env === "development" ? config?.password : process.env.DB_PASSWORD;
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
@@ -16,7 +17,8 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(
     config.database,
     config.username,
-    config.password,
+    db_password,
+    // config.password,
     config
   );
 }
