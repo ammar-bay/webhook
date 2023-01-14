@@ -1,7 +1,9 @@
 const axios = require("axios");
-const Notification = require("../models/Notification");
-const Message = require("../models/Message");
-const Conversation = require("../models/Conversation");
+// const Notification = require("../models/Notification");
+// const Message = require("../models/Message");
+const db = require("../models");
+const Message = db.Message;
+const Conversation = db.Conversation;
 
 const FacebookWebhookRouter = (io) => {
   const router = require("express").Router();
@@ -19,20 +21,22 @@ const FacebookWebhookRouter = (io) => {
         req.body.entry[0].changes[0] &&
         req.body.entry[0].changes[0].value.item
       ) {
-        // const type = req.body.entry[0].changes[0].value.item;
-        console.log("Facebook Page");
-        const value = req.body.entry[0].changes[0].value;
-        // console.log(value);
-        io.emit("fbEvents", value);
-        try {
-          const notify = await Notification.create(value);
-          // console.log(notify);
-          res.sendStatus(200);
-        } catch (error) {
-          // console.log("Error in saving notification in db");
-          console.log(error);
-          res.sendStatus(500);
-        }
+        // // const type = req.body.entry[0].changes[0].value.item;
+        // console.log("Facebook Page");
+        // const value = req.body.entry[0].changes[0].value;
+        // // console.log(value);
+        // io.emit("fbEvents", value);
+        // try {
+        //   const notify = await Notification.create(value);
+        //   // console.log(notify);
+        //   res.sendStatus(200);
+        // } catch (error) {
+        //   // console.log("Error in saving notification in db");
+        //   console.log(error);
+        //   res.sendStatus(500);
+        // }
+        res.sendStatus(200);
+        return;
       } else if (
         req.body.entry &&
         req.body.entry[0].messaging &&
@@ -44,16 +48,16 @@ const FacebookWebhookRouter = (io) => {
         console.log(value);
         if (value.sender.id === "105647745661703") {
           console.log("SENDER WAS PAGE IT SELF");
-          await Message.updateOne(
-            { id: value.message.mid },
-            { $set: { status: "delivered" } }
-          );
-          const status = {
-            id: value.message.mid,
-            status: "delivered",
-          };
-          io.emit("msgStatus", status);
-          res.sendStatus(200);
+          // await Message.updateOne(
+          //   { id: value.message.mid },
+          //   { $set: { status: "delivered" } }
+          // );
+          // const status = {
+          //   id: value.message.mid,
+          //   status: "delivered",
+          // };
+          // io.emit("msgStatus", status);
+          // res.sendStatus(200);
           return;
         }
         const message = {
@@ -73,8 +77,16 @@ const FacebookWebhookRouter = (io) => {
         });
 
         try {
-          Message.create(message);
-          const result = await Conversation.findOne({ id: value?.sender?.id });
+          await Message.create({
+            conversation_id: value?.sender?.id,
+            user_id: value?.sender?.id,
+            mid: value?.message?.mid,
+            type: "text",
+            content: value?.message?.text,
+          });
+          const result = await Conversation.findOne({
+            where: { id: value?.sender?.id },
+          });
           if (!result) {
             let username = "";
             try {
@@ -93,11 +105,11 @@ const FacebookWebhookRouter = (io) => {
             const conversation = {
               id: value?.sender?.id,
               name: username,
-              lastmessagetype: value?.message?.text ? "text" : "image",
-              lastmessage: value?.message?.text
+              last_message_type: value?.message?.text ? "text" : "image",
+              last_message: value?.message?.text
                 ? value?.message?.text
                 : "Image",
-              lastmessagetime: Date.now(),
+              last_message_time: Date.now(),
               lastmessageby: "customer",
               unread: true,
               platform: "messenger",
@@ -108,11 +120,11 @@ const FacebookWebhookRouter = (io) => {
               { id: value?.sender?.id },
               {
                 $set: {
-                  lastmessage: value?.message?.text
+                  last_message: value?.message?.text
                     ? value?.message?.text
                     : "Image",
-                  lastmessagetime: Date.now(),
-                  lastmessagetype: value?.message?.text ? "text" : "image",
+                  last_message_time: Date.now(),
+                  last_message_type: value?.message?.text ? "text" : "image",
                   lastmessageby: "customer",
                   unread: true,
                 },

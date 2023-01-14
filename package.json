@@ -21,7 +21,9 @@
     "jsonwebtoken": "^9.0.0",
     "jwk-to-pem": "^2.0.5",
     "mongoose": "^6.6.7",
+    "mysql2": "^2.3.3",
     "request": "^2.88.2",
+    "sequelize": "^6.28.0",
     "socket.io": "^4.5.3"
   },
   "engines": {

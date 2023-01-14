@@ -1,8 +1,31 @@
 const router = require("express").Router();
-const Message = require("../models/Message");
+const db = require("../models");
+const Conversation = db.Conversation;
+const Message = db.Message;
+const User = db.User;
 const axios = require("axios");
-const Conversation = require("../models/Conversation");
-const { parse } = require("csv-parse");
+
+//get all messages of a conversation
+router.get("/:conversationId", async (req, res) => {
+  try {
+    const messages = await Message.findAll({
+      where: { conversation_id: req.params.conversationId },
+      include: {
+        model: User,
+        attributes: ["username"],
+        as: "user",
+      },
+    });
+    // if (!messages) {
+    //   return res.status(200).json([]);
+    // }
+    res.status(200).json(messages);
+  } catch (err) {
+    console.log("Error occured in the get all messages route");
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
 
 // Operator replies to a message
 router.post("/", async (req, res) => {
@@ -25,51 +48,60 @@ router.post("/", async (req, res) => {
           "Content-Type": "application/json",
         },
       });
-      console.log(result.data);
-      const newMessage = new Message({
-        ...req.body,
-        id: result.data.message_id,
+      // console.log(result.data);
+
+      // const newMessage = new Message({
+      //   ...req.body,
+      //   id: result.data.message_id,
+      // });
+      // const savedMessage = await newMessage.save();
+      const savedMessage = await Message.create({
+        conversation_id: conversationId,
+        user_id: senderId,
+        type: "text",
+        content: text,
+        mid: result.data.message_id,
       });
-      const savedMessage = await newMessage.save();
-      await Conversation.updateOne(
-        { id: conversationId },
+
+      //update conversation
+      // await Conversation.updateOne(
+      //   { id: conversationId },
+      //   {
+      //     $set: {
+      //       last_message: text,
+      //       last_message_time: Date.now(),
+      //       last_message_type: "text",
+      //       lastmessageby: senderName,
+      //       unread: false,
+      //     },
+      //     $addToSet: { members: senderId },
+      //   }
+      // );
+
+      await Conversation.update(
         {
-          $set: {
-            lastmessage: text,
-            lastmessagetime: Date.now(),
-            lastmessagetype: "text",
-            lastmessageby: senderName,
-            unread: false,
-          },
-          $addToSet: { members: senderId },
+          last_message: text,
+          last_message_time: Date.now(),
+          last_message_type: "text",
+          lastmessageby: senderName,
+          unread: false,
+        },
+        {
+          where: { id: conversationId },
         }
       );
-
       res.status(200).json(savedMessage);
 
       // return res.status(200).json({ message: "Message sent" });
     } catch (error) {
+      console.log("Error occured in the post message route");
       console.log(error);
       res.status(500).json({ error: "Something went wrong" });
     }
   } else if (req.body.platform === "whatsapp") {
     console.log("Whatsapp");
-
     const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
     const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
-
-    // send this message to the receiverId that is the number of the customer
-    // const body = `
-    // {
-    //   "messaging_product": "whatsapp",
-    //   "recipient_type": "individual",
-    //   "to": "${conversationId}",
-    //   "type": "text",
-    //   "text": {
-    //     "preview_url": false,
-    //     "body": "${text}"
-    //   }
-    // }`;
 
     const body = JSON.stringify({
       messaging_product: "whatsapp",
@@ -87,25 +119,45 @@ router.post("/", async (req, res) => {
         headers: { Authorization: token, "Content-Type": "application/json" },
       });
       // console.log(result.data.messages[0].id);
-      const newMessage = new Message({
-        ...req.body,
-        id: result.data.messages[0].id,
+      // const newMessage = new Message({
+      //   ...req.body,
+      //   id: result.data.messages[0].id,
+      // });
+      // const savedMessage = await newMessage.save();
+      const savedMessage = await Message.create({
+        conversation_id: conversationId,
+        user_id: senderId,
+        type: "text",
+        content: text,
+        mid: result.data.messages[0].id,
       });
-      const savedMessage = await newMessage.save();
-      await Conversation.updateOne(
-        { id: conversationId },
+
+      // await Conversation.updateOne(
+      //   { id: conversationId },
+      //   {
+      //     $set: {
+      //       last_message: text,
+      //       last_message_time: Date.now(),
+      //       last_message_type: "text",
+      //       lastmessageby: senderName,
+      //       unread: false,
+      //     },
+      //     $addToSet: { members: senderId },
+      //   }
+      // );
+
+      await Conversation.update(
         {
-          $set: {
-            lastmessage: text,
-            lastmessagetime: Date.now(),
-            lastmessagetype: "text",
-            lastmessageby: senderName,
-            unread: false,
-          },
-          $addToSet: { members: senderId },
+          last_message: text,
+          last_message_time: Date.now(),
+          last_message_type: "text",
+          lastmessageby: senderName,
+          unread: false,
+        },
+        {
+          where: { id: conversationId },
         }
       );
-
       res.status(200).json(savedMessage);
     } catch (error) {
       console.log("Something went wrong in Whatsapp: ", error);
@@ -125,6 +177,8 @@ router.post("/", async (req, res) => {
   // save the conversation in db
 });
 
+// This needs imporvement in cleaning the data and sending the response to client
+// Operator sends a template to users from csv file
 router.post("/numbers", async (req, res) => {
   const { array, template, senderId, senderName } = req.body;
   const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
@@ -149,24 +203,24 @@ router.post("/numbers", async (req, res) => {
 
         //save the conversation in db
         // console.log("result.data.messages[0].id", result.data.messages[0].id);
-        const convo = await Conversation.exists({ id: receiverId });
-        if (!convo) {
-          await Conversation.create({
-            id: receiverId,
-            lastmessage: template,
-            lastmessagetime: Date.now(),
-            lastmessagetype: "template",
-            members: [senderId],
-          });
-        }
-        console.log("Conversation created", receiverId);
-        const messages = await Message.create({
-          conversationId: receiverId,
-          senderId,
-          senderName,
-          text: template,
-          id: result.data.messages[0].id,
-        });
+        // const convo = await Conversation.exists({ id: receiverId });
+        // if (!convo) {
+        //   await Conversation.create({
+        //     id: receiverId,
+        //     last_message: template,
+        //     last_message_time: Date.now(),
+        //     last_message_type: "template",
+        //     members: [senderId],
+        //   });
+        // }
+        // console.log("Conversation created", receiverId);
+        // const messages = await Message.create({
+        //   conversationId: receiverId,
+        //   senderId,
+        //   senderName,
+        //   text: template,
+        //   id: result.data.messages[0].id,
+        // });
 
         // res.sendStatus(200);
         console.log("Message sent successfully to: ", receiverId);
@@ -184,18 +238,6 @@ router.post("/numbers", async (req, res) => {
   //   console.log(item);
   // });
   res.status(200).json(result);
-});
-
-//get
-router.get("/:conversationId", async (req, res) => {
-  try {
-    const messages = await Message.find({
-      conversationId: req.params.conversationId,
-    });
-    res.status(200).json(messages);
-  } catch (err) {
-    res.status(500).json(err);
-  }
 });
 
 module.exports = router;

@@ -1,13 +1,15 @@
 const router = require("express").Router();
-const User = require("../models/User");
-const bcrypt = require("bcrypt");
+// const User = require("../models");
+// const bcrypt = require("bcrypt");
+const db = require("../models");
+const User = db.User;
 const awsCognito = require("amazon-cognito-identity-js");
 const verifyRoles = require("../middleware/verifyRoles");
 
 //REGISTER
-router.post("/register", verifyRoles(["Admin"]), async (req, res) => {
-  // router.post("/register", async (req, res) => {
-  const { username, email, password } = req.body;
+// router.post("/register", verifyRoles(["Admin"]), async (req, res) => {
+router.post("/register", async (req, res) => {
+  const { username, email, password, role } = req.body;
   const poolData = {
     UserPoolId: process.env.AWS_USER_POOL_ID,
     ClientId: process.env.AWS_CLIENT_ID,
@@ -28,20 +30,28 @@ router.post("/register", verifyRoles(["Admin"]), async (req, res) => {
       }),
       new awsCognito.CognitoUserAttribute({
         Name: "custom:role",
-        Value: "Admin",
+        Value: role,
       }),
     ],
     null,
-    (err, data) => {
+    async (err, data) => {
       if (err) {
         console.error(err);
         res.status(500).json("Sign up failed");
       } else {
         // console.log(data);
+        await User.create({
+          username,
+          email,
+          password,
+          role,
+          id: data.userSub,
+        });
         res.status(200).json(data);
       }
     }
   );
+
   // try {
   //   //generate new password
   //   const salt = await bcrypt.genSalt(10);

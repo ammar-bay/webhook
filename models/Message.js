@@ -1,39 +1,57 @@
-const mongoose = require("mongoose");
-
-const MessageSchema = new mongoose.Schema(
-  {
-    conversationId: {
-      // this is customers phonenumber
-      type: String,
-      required: true,
+module.exports = (sequelize, DataTypes) => {
+  const Message = sequelize.define(
+    "Message",
+    {
+      // Primary Key
+      mid: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+      },
+      // foreign key reference User
+      user_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      // foreign key reference Conversation
+      conversation_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      content: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+            status: {
+        type: DataTypes.STRING,
+      },
+      // createdAt: {
+      //   type: DataTypes.DATE,
+      //   allowNull: true,
+      //   defaultValue: DataTypes.NOW,
+      // },
+      // updatedAt: {
+      //   type: DataTypes.DATE,
+      //   allowNull: true,
+      //   defaultValue: DataTypes.NOW,
+      // },
     },
-    id: {
-      type: String,
-      // required: true,
-    },
-    status: {
-      type: String,
-      default: "",
-    },
-    senderId: {
-      // this is operators id
-      type: String,
-    },
-    senderName: {
-      // this is operators name
-      type: String,
-    },
-    text: {
-      type: String,
-    },
-    img: {
-      type: String,
-    },
-    type: {
-      type: String,
-    },
-  },
-  { timestamps: true }
-);
-
-module.exports = mongoose.model("Message", MessageSchema);
+    {}
+  );
+  Message.associate = function (models) {
+    Message.belongsTo(models.User, {
+      foreignKey: "user_id",
+      as: "user",
+      onUpdate: "SET NULL",
+      onDelete: "SET NULL",
+    });
+    Message.belongsTo(models.Conversation, {
+      foreignKey: "conversation_id",
+      as: "conversation",
+    });
+  };
+  return Message;
+};

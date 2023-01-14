@@ -1,63 +1,52 @@
-const mongoose = require("mongoose");
-
-const UserSchema = new mongoose.Schema(
-  {
-    username: {
-      type: String,
-      require: true,
-      min: 3,
-      max: 20,
-      // unique: true,
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define(
+    "User",
+    {
+      id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+      },
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      role: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      // createdAt: {
+      //   type: DataTypes.DATE,
+      //   allowNull: true,
+      //   defaultValue: DataTypes.NOW,
+      // },
+      // updatedAt: {
+      //   type: DataTypes.DATE,
+      //   allowNull: true,
+      //   defaultValue: DataTypes.NOW,
+      // },
     },
-    email: {
-      type: String,
-      required: true,
-      max: 50,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-      min: 6,
-    },
-    // profilePicture: {
-    //   type: String,
-    //   default: "",
-    // },
-    // coverPicture: {
-    //   type: String,
-    //   default: "",
-    // },
-    // followers: {
-    //   type: Array,
-    //   default: [],
-    // },
-    // followings: {
-    //   type: Array,
-    //   default: [],
-    // },
-    isAdmin: {
-      type: Boolean,
-      default: false,
-    },
-    // desc: {
-    //   type: String,
-    //   max: 50,
-    // },
-    // city: {
-    //   type: String,
-    //   max: 50,
-    // },
-    // from: {
-    //   type: String,
-    //   max: 50,
-    // },
-    // relationship: {
-    //   type: Number,
-    //   enum: [1, 2, 3],
-    // },
-  },
-  { timestamps: true }
-);
-
-module.exports = mongoose.model("User", UserSchema);
+    {}
+  );
+  User.associate = function (models) {
+    User.belongsToMany(models.Conversation, {
+      through: "Conversation_User",
+      foreignKey: "user_id",
+    });
+    User.hasMany(models.Message, {
+      foreignKey: "user_id",
+      as: "messages",
+      onUpdate: "SET NULL",
+      onDelete: "SET NULL",
+    });
+  };
+  return User;
+};

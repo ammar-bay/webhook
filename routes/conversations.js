@@ -1,27 +1,28 @@
-const Conversation = require("../models/Conversation");
-const Message = require("../models/Message");
+const db = require("../models");
+const Conversation = db.Conversation;
+const Message = db.Message;
+const User = db.User;
 const axios = require("axios");
 
 //new conv
 const ConversationRouter = (io) => {
   const router = require("express").Router();
 
-  //   router.post("/", async (req, res) => {
-  //     const newConversation = new Conversation({
-  //       members: [req.body.senderId, req.body.receiverId],
-  //   });
+  //get all conversations
+  router.get("/", async (req, res) => {
+    try {
+      const conversation = await Conversation.findAll();
+      res.status(200).json(conversation);
+    } catch (err) {
+      console.log("Error occured in the get all conversations route");
+      console.log(err);
+      res.status(500).json(err);
+    }
+  });
 
-  //   try {
-  //     const savedConversation = await newConversation.save();
-  //     res.status(200).json(savedConversation);
-  //   } catch (err) {
-  //     res.status(500).json(err);
-  //   }
-  // });
-
-  //Operator initiated chat with customer on WhatsApp message will be a template message
+  //Business initiated chat with customer on WhatsApp message will be a template message
   router.post("/initiate", async (req, res) => {
-    // console.log("Initiate chat");
+    console.log("initiate chat/send template message route");
     const { receiverId, template, senderId, senderName } = req.body;
 
     const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
@@ -36,54 +37,37 @@ const ConversationRouter = (io) => {
       });
 
       //save the conversation in db
-      // console.log("result.data.messages[0].id", result.data.messages[0].id);
-      const convo = await Conversation.exists({ id: receiverId });
+      const convo = await Conversation.findOne({
+        where: { id: receiverId },
+      });
       if (!convo) {
         await Conversation.create({
           id: receiverId,
-          lastmessage: template,
-          lastmessagetime: Date.now(),
-          lastmessagetype: "template",
-          members: [senderId],
+          last_message: template,
+          last_message_time: Date.now(),
+          last_message_type: "template",
+          // members: [senderId],
         });
+        // create entry into the conversation_user table with conversaton_id: receiverId and user_id: senderId
+        console.log("Conversation created", receiverId);
       }
-      console.log("Conversation created", receiverId);
       const messages = await Message.create({
-        conversationId: receiverId,
-        senderId,
-        senderName,
-        text: template,
-        id: result.data.messages[0].id,
+        conversation_id: receiverId,
+        user_id: senderId,
+        // senderName,
+        type: "template",
+        content: template,
+        mid: result.data.messages[0].id,
       });
 
       res.sendStatus(200);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log("Error occured in the initiate chat route");
+      // console.log(err);
       res.status(500).json({ error: "Something went wrong" });
     }
   });
 
-  //get conv of a user
-  router.get("/", async (req, res) => {
-    try {
-      const conversation = await Conversation.find();
-      res.status(200).json(conversation);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  });
-
-  // get conv includes two userId
-  // router.get("/find/:firstUserId/:secondUserId", async (req, res) => {
-  //   try {
-  //     const conversation = await Conversation.findOne({
-  //       members: { $all: [req.params.firstUserId, req.params.secondUserId] },
-  //     });
-  //     res.status(200).json(conversation);
-  //   } catch (err) {
-  //     res.status(500).json(err);
-  //   }
-  // });
   return router;
 };
 module.exports = ConversationRouter;

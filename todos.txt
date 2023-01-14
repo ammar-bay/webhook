@@ -1,62 +1,22 @@
 Overall:
     Post to every platform
     mobile layout
-    add authentication using aws
     change the prod database to AWS
-    ring on new msg
     refactor the code frontend and backend
-    add signout functionality
+    aws cognito email confirmation
 
-Whatsapp & Messenger:
+Unified Messenger:
     how to add operators to conversation members
-    msg send on enter
-    search customer by name or number
     add members to conversation
     expiration date of conversation - dont allow to send msg after that can just send template message
-    toast on new msg sent template
     time of msg
     when user sends a voice msg
     react on messages
-    Need to keep track of total conversations for month
+    Keep track of total conversations for month
 
-Facebook Page:
+Unified Notification:
     all cards should have checked/seen button
     pagination
 
-messenger messgage body
-req.body.entry[0].messaging[0] = {
-    sender: { id: '5417462455039861' },
-    recipient: { id: '105647745661703' },
-    timestamp: 1670853051809,
-    message: {
-        mid: 'm_V2X2EjDjc3sMTLe1HmEp2oXhtpzUA6GHSMGyQRFzy0jump3CLvRbukNOkTnJER5gkUP3YD8_ZmICUR2XF-r-wg',
-        text: 'ok'
-    }
-}
-
-req.body = {
-    "object":"page",
-    "entry":[
-        {
-            "id":"120047298857053",
-            "time":1672217385123,
-            "messaging":[
-                {
-                    "sender":{"id":"8073788526024481"},
-                    "recipient":{"id":"120047298857053"},
-                    "timestamp":1672217387020,
-                    "read":{"watermark":1672217385409}
-                }
-            ]
-        }
-    ]
-}
-
-Dec 28th:
-Write a user guide
-Send template mesage from csv file:
-    clean the data
-    view the csv
-    view successful and unsuccessful messages
-    download the csv with successful and unsuccessful messages    
-Messenger messages
+Admin Panel:
+    only admins can see the panel

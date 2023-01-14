@@ -1,0 +1,25 @@
+{
+  "development": {
+    "username": "root",
+    "password": "PASSWORD",
+    "database": "unified_chat",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "port": 3306
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "unifiedsocial",
+    "password": null,
+    "database": "unifiedchat",
+    "host": "unified-chat-db.cxmsoa44dxsg.us-east-1.rds.amazonaws.com",
+    "dialect": "mysql",
+    "port": 3306
+  }
+}

@@ -78,9 +78,9 @@ const WhatsappWebhookRouter = (io) => {
           const conversation = {
             id: contacts.wa_id,
             name: contacts.profile.name,
-            lastmessagetype: messages?.text ? "text" : "image",
-            lastmessage: messages?.text ? messages?.text?.body : "Image",
-            lastmessagetime: Date.now(),
+            last_message_type: messages?.text ? "text" : "image",
+            last_message: messages?.text ? messages?.text?.body : "Image",
+            last_message_time: Date.now(),
             lastmessageby: "customer",
             unread: true,
           };
@@ -92,9 +92,9 @@ const WhatsappWebhookRouter = (io) => {
               {
                 $set: {
                   name: contacts.profile.name,
-                  lastmessage: messages?.text ? messages?.text?.body : "Image",
-                  lastmessagetime: Date.now(),
-                  lastmessagetype: messages?.text ? "text" : "image",
+                  last_message: messages?.text ? messages?.text?.body : "Image",
+                  last_message_time: Date.now(),
+                  last_message_type: messages?.text ? "text" : "image",
                   lastmessageby: "customer",
                   unread: true,
                 },
@@ -105,9 +105,9 @@ const WhatsappWebhookRouter = (io) => {
               { id: contacts.wa_id },
               {
                 $set: {
-                  lastmessage: messages?.text ? messages?.text?.body : "Image",
-                  lastmessagetime: Date.now(),
-                  lastmessagetype: messages?.text ? "text" : "image",
+                  last_message: messages?.text ? messages?.text?.body : "Image",
+                  last_message_time: Date.now(),
+                  last_message_type: messages?.text ? "text" : "image",
                   lastmessageby: "customer",
                   unread: true,
                 },

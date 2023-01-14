@@ -1,40 +1,60 @@
-const mongoose = require("mongoose");
-
-const ConversationSchema = new mongoose.Schema(
-  {
-    id: {
-      // this is customers phonenumber
-      type: String,
-      required: true,
+module.exports = (sequelize, DataTypes) => {
+  const Conversation = sequelize.define(
+    "Conversation",
+    {
+      // Primary Key
+      id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+      },
+      last_message: {
+        type: DataTypes.STRING,
+      },
+      last_message_type: {
+        type: DataTypes.STRING,
+      },
+      last_message_time: {
+        type: DataTypes.STRING,
+      },
+      platform: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      unread: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      // 0: active, 1: inactive (deleted) 2: blocked
+      status: {
+        type: DataTypes.STRING,
+      },
+      // createdAt: {
+      //   type: DataTypes.DATE,
+      //   allowNull: true,
+      //   defaultValue: DataTypes.NOW,
+      // },
+      // updatedAt: {
+      //   type: DataTypes.DATE,
+      //   allowNull: true,
+      //   defaultValue: DataTypes.NOW,
+      // },
     },
-    name: {
-      // this is customers name
-      type: String,
-      // required: true,
-    },
-    lastmessagetype: {
-      type: String,
-      // required: true,
-    },
-    lastmessage: {
-      type: String,
-    },
-    lastmessagetime: {
-      type: Number,
-    },
-    members: {
-      // this will be an array of operators id
-      type: Array,
-    },
-    unread: {
-      type: Boolean,
-    },
-    platform: {
-      type: String,
-      default: "whatsapp",
-    },
-  },
-  { timestamps: true }
-);
-
-module.exports = mongoose.model("Conversation", ConversationSchema);
+    {}
+  );
+  Conversation.associate = function (models) {
+    // associations can be defined here
+    Conversation.belongsToMany(models.User, {
+      through: "Conversation_User",
+      foreignKey: "conversation_id",
+    });
+    Conversation.hasMany(models.Message, {
+      foreignKey: "conversation_id",
+      as: "messages",
+    });
+  };
+  return Conversation;
+};
