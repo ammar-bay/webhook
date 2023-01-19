@@ -145,6 +145,7 @@ const FacebookWebhookRouter = (io) => {
       // Return a '404 Not Found' if event is not from a Facebook API
       console.log("Not from Facebook Page Webhook");
       res.sendStatus(404);
+      
     }
   });
 
