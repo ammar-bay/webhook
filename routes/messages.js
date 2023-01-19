@@ -99,7 +99,7 @@ router.post("/", async (req, res) => {
       const result = await axios.post(url, body, {
         headers: { Authorization: token, "Content-Type": "application/json" },
       });
-      console.log(result);
+      console.log(result.data);
       const savedMessage = await Message.create({
         conversation_id,
         user_id,
