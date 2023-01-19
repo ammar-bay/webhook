@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      sender_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       // foreign key reference Conversation
       conversation_id: {
         type: DataTypes.STRING,
@@ -25,15 +29,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-            status: {
+      status: {
         type: DataTypes.STRING,
+        allowNull: true,
       },
-      
-      // createdAt: {
-      //   type: DataTypes.DATE,
-      //   allowNull: true,
-      //   defaultValue: DataTypes.NOW,
-      // },
+      created_at: {
+        type: DataTypes.NUMBER,
+        allowNull: false,
+      },
       // updatedAt: {
       //   type: DataTypes.DATE,
       //   allowNull: true,

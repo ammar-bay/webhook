@@ -19,6 +19,9 @@ module.exports = (sequelize, DataTypes) => {
       last_message_time: {
         type: DataTypes.STRING,
       },
+      last_message_by: {
+        type: DataTypes.STRING,
+      },
       platform: {
         type: DataTypes.STRING,
         allowNull: false,

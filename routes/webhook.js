@@ -10,50 +10,30 @@ const WhatsappWebhookRouter = (io) => {
 
   router.post("/", async (req, res) => {
     console.log("POST request to /webhook");
-    // Check the Incoming webhook message
-    // console.log(JSON.stringify(req.body, null, 2));
-    // check type of incoming the incoming request
-    // Message request
-    // console.log(JSON.stringify(req.body));
+    // console.log(req.body);
     if (req.body.entry[0]?.changes[0]?.value?.messages) {
-      // console.log("Message request");
       // console.log(req.body.entry[0]?.changes[0]?.value);
       const type = req.body.entry[0]?.changes[0]?.value?.messages[0]?.type;
       const contacts = req.body.entry[0]?.changes[0]?.value?.contacts[0];
       const messages = req.body.entry[0]?.changes[0]?.value?.messages[0];
-      // console.log(contacts);
 
       /////////////////////////////////////////////
-      let message;
+
+      let content;
       if (type === "text") {
-        // if (messages?.text) {
-        message = {
-          conversationId: contacts.wa_id,
-          senderId: contacts.wa_id,
-          senderName: contacts.profile.name,
-          text: messages?.text?.body,
-          type,
-        };
+        content = messages?.text?.body;
       } else if (type === "image") {
-        // } else if (messages?.image) {
         const id = messages?.image?.id;
         const image = await axios.get(
           `https://graph.facebook.com/v14.0/${id}?access_token=${process.env.WA_ACCESS_TOKEN}`
         );
         const imageurl = image?.data?.url;
-        // console.log("Image url: \n", imageurl?.data?.url);
         const imgbinary = await axios.get(imageurl, {
           responseType: "arraybuffer",
           headers: { Authorization: `Bearer ${process.env.WA_ACCESS_TOKEN}` },
         });
         const img = Buffer.from(imgbinary.data, "binary").toString("base64");
-        message = {
-          conversationId: contacts.wa_id,
-          senderId: contacts.wa_id,
-          senderName: contacts.profile.name,
-          img,
-          type,
-        };
+        content = img;
       } else if (type === "audio") {
         res.sendStatus(200);
         return;
@@ -66,63 +46,51 @@ const WhatsappWebhookRouter = (io) => {
         return;
       }
 
+      const message = {
+        conversation_id: contacts.wa_id,
+        user_id: null,
+        sender_name: contacts.profile.name,
+        mid: messages.id,
+        type,
+        content,
+        created_at: Date.now(),
+      };
+
       io.emit("waMessage", {
         ...message,
+        // sending this if the message is a new conversation
         platform: "whatsapp",
-        createdAt: Date.now(),
       });
       try {
-        Message.create({
-          conversation_id: message.conversationId,
-          user_id: null,
-          mid: messages.id,
-          type: message.type,
-          content: message.type === "text" ? message.text : message.img,
-        });
+        Message.create(message);
         const result = await Conversation.findOne({
           where: { id: contacts.wa_id },
         });
-        // const result = await Conversation.findOne({ id: contacts.wa_id });
-        // const result = await Conversation.exists({ id: contacts.wa_id });
+
         if (!result) {
           const conversation = {
             id: contacts.wa_id,
             name: contacts.profile.name,
-            last_message_type: messages?.type,
-            last_message: message.type === "text" ? message.text : "Image",
+            last_message_type: type,
+            last_message: type === "text" ? content : "Image",
             last_message_time: Date.now(),
-            // lastmessageby: "customer",
+            last_message_by: "customer",
             platform: "whatsapp",
             unread: true,
           };
           await Conversation.create(conversation);
         } else {
-          // if (!result.name) {
           await Conversation.update(
             {
               name: contacts.profile.name,
-              last_message: messages?.text ? messages?.text?.body : "Image",
+              last_message: type === "text" ? message.content : "Image",
               last_message_time: Date.now(),
-              last_message_type: messages?.text ? "text" : "image",
-              // lastmessageby: "customer",
+              last_message_type: type,
+              last_message_by: "customer",
               unread: true,
             },
             { where: { id: contacts.wa_id } }
           );
-          // } else {
-          //   await Conversation.updateOne(
-          //     { id: contacts.wa_id },
-          //     {
-          //       $set: {
-          //         last_message: messages?.text ? messages?.text?.body : "Image",
-          //         last_message_time: Date.now(),
-          //         last_message_type: messages?.text ? "text" : "image",
-          //         lastmessageby: "customer",
-          //         unread: true,
-          //       },
-          //     }
-          //   );
-          // }
         }
         res.sendStatus(200);
       } catch (error) {
@@ -134,7 +102,6 @@ const WhatsappWebhookRouter = (io) => {
     // Message status request
     else {
       console.log("Message status request");
-      // console.log(req.body);
       const status = req.body.entry[0]?.changes[0]?.value?.statuses[0];
       await Message.update(
         {
@@ -145,47 +112,6 @@ const WhatsappWebhookRouter = (io) => {
       io.emit("msgStatus", status);
       res.sendStatus(200);
     }
-
-    // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
-    // if (req.body.object) {
-    //   if (
-    //     req.body.entry &&
-    //     req.body.entry[0].changes &&
-    //     req.body.entry[0].changes[0] &&
-    //     req.body.entry[0].changes[0].value.messages &&
-    //     req.body.entry[0].changes[0].value.messages[0]
-    //   ) {
-    //     let phone_number_id =
-    //       req.body.entry[0].changes[0].value.metadata.phone_number_id;
-    //     let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
-    //     let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
-    //     // console.log("Sending axios post");
-    //     try {
-    //       const result = await axios({
-    //         method: "POST", // Required, HTTP method, a string, e.g. POST, GET
-    //         url:
-    //           "https://graph.facebook.com/v12.0/" +
-    //           phone_number_id +
-    //           "/messages?access_token=" +
-    //           process.env.WA_ACCESS_TOKEN,
-    //         data: {
-    //           messaging_product: "whatsapp",
-    //           to: from,
-    //           text: { body: "Ack: " + msg_body },
-    //         },
-    //         headers: { "Content-Type": "application/json" },
-    //       });
-    //     } catch (error) {
-    //       console.log(error);
-    //       // console.log("ERROR!!");
-    //     }
-    //   }
-
-    //   res.sendStatus(200);
-    // } else {
-    //   // Return a '404 Not Found' if event is not from a WhatsApp API
-    //   res.sendStatus(404);
-    // }
   });
 
   // Accepts GET requests at the /webhook endpoint. You need this URL to setup webhook initially.

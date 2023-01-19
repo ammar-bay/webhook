@@ -23,11 +23,11 @@ const ConversationRouter = (io) => {
   //Business initiated chat with customer on WhatsApp message will be a template message
   router.post("/initiate", async (req, res) => {
     console.log("initiate chat/send template message route");
-    const { receiverId, template, senderId, senderName } = req.body;
+    const { receiver_id, template, user_id, sender_name } = req.body;
 
     const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
     const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
-    const body = `{ "messaging_product": "whatsapp", "to": ${receiverId}, "type": "template", "template": { "name": "${template}", "language": { "code": "en_US" } } }`;
+    const body = `{ "messaging_product": "whatsapp", "to": ${receiver_id}, "type": "template", "template": { "name": "${template}", "language": { "code": "en_US" } } }`;
 
     // can use promise.all here
     try {
@@ -38,26 +38,27 @@ const ConversationRouter = (io) => {
 
       //save the conversation in db
       const convo = await Conversation.findOne({
-        where: { id: receiverId },
+        where: { id: receiver_id },
       });
       if (!convo) {
         await Conversation.create({
-          id: receiverId,
+          id: receiver_id,
           last_message: template,
           last_message_time: Date.now(),
           last_message_type: "template",
-          // members: [senderId],
+          last_message_by: sender_name,
         });
         // create entry into the conversation_user table with conversaton_id: receiverId and user_id: senderId
-        console.log("Conversation created", receiverId);
+        console.log("Conversation created", receiver_id);
       }
-      const messages = await Message.create({
-        conversation_id: receiverId,
-        user_id: senderId,
-        // senderName,
+      const message = await Message.create({
+        conversation_id: receiver_id,
+        user_id,
+        sender_name,
         type: "template",
         content: template,
         mid: result.data.messages[0].id,
+        created_at: Date.now(),
       });
 
       res.sendStatus(200);

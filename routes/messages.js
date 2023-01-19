@@ -6,10 +6,10 @@ const User = db.User;
 const axios = require("axios");
 
 //get all messages of a conversation
-router.get("/:conversationId", async (req, res) => {
+router.get("/:conversation_id", async (req, res) => {
   try {
     const messages = await Message.findAll({
-      where: { conversation_id: req.params.conversationId },
+      where: { conversation_id: req.params.conversation_id },
       include: {
         model: User,
         attributes: ["username"],
@@ -29,16 +29,17 @@ router.get("/:conversationId", async (req, res) => {
 
 // Operator replies to a message
 router.post("/", async (req, res) => {
-  const { senderId, conversationId, text, senderName } = req.body;
+  const { user_id, conversation_id, content, sender_name, type, created_at } =
+    req.body;
   if (req.body.platform === "messenger") {
     console.log("Messenger");
     const url = `https://graph.facebook.com/v15.0/me/messages?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`;
     const body = {
       recipient: {
-        id: conversationId,
+        id: conversation_id,
       },
       message: {
-        text,
+        content,
       },
     };
     try {
@@ -48,51 +49,30 @@ router.post("/", async (req, res) => {
           "Content-Type": "application/json",
         },
       });
-      // console.log(result.data);
 
-      // const newMessage = new Message({
-      //   ...req.body,
-      //   id: result.data.message_id,
-      // });
-      // const savedMessage = await newMessage.save();
       const savedMessage = await Message.create({
-        conversation_id: conversationId,
-        user_id: senderId,
-        type: "text",
-        content: text,
+        conversation_id,
+        user_id,
+        sender_name,
+        content,
+        type,
         mid: result.data.message_id,
+        created_at,
       });
-
-      //update conversation
-      // await Conversation.updateOne(
-      //   { id: conversationId },
-      //   {
-      //     $set: {
-      //       last_message: text,
-      //       last_message_time: Date.now(),
-      //       last_message_type: "text",
-      //       lastmessageby: senderName,
-      //       unread: false,
-      //     },
-      //     $addToSet: { members: senderId },
-      //   }
-      // );
 
       await Conversation.update(
         {
           last_message: text,
           last_message_time: Date.now(),
-          last_message_type: "text",
-          lastmessageby: senderName,
+          last_message_type: type,
+          last_message_by: sender_name,
           unread: false,
         },
         {
-          where: { id: conversationId },
+          where: { id: conversation_id },
         }
       );
       res.status(200).json(savedMessage);
-
-      // return res.status(200).json({ message: "Message sent" });
     } catch (error) {
       console.log("Error occured in the post message route");
       console.log(error);
@@ -106,11 +86,11 @@ router.post("/", async (req, res) => {
     const body = JSON.stringify({
       messaging_product: "whatsapp",
       recipient_type: "individual",
-      to: conversationId,
+      to: conversation_id,
       type: "text",
       text: {
         preview_url: false,
-        body: text,
+        body: content,
       },
     });
 
@@ -118,44 +98,25 @@ router.post("/", async (req, res) => {
       const result = await axios.post(url, body, {
         headers: { Authorization: token, "Content-Type": "application/json" },
       });
-      // console.log(result.data.messages[0].id);
-      // const newMessage = new Message({
-      //   ...req.body,
-      //   id: result.data.messages[0].id,
-      // });
-      // const savedMessage = await newMessage.save();
       const savedMessage = await Message.create({
-        conversation_id: conversationId,
-        user_id: senderId,
-        type: "text",
-        content: text,
+        conversation_id,
+        user_id,
+        type,
+        content,
         mid: result.data.messages[0].id,
+        created_at,
       });
-
-      // await Conversation.updateOne(
-      //   { id: conversationId },
-      //   {
-      //     $set: {
-      //       last_message: text,
-      //       last_message_time: Date.now(),
-      //       last_message_type: "text",
-      //       lastmessageby: senderName,
-      //       unread: false,
-      //     },
-      //     $addToSet: { members: senderId },
-      //   }
-      // );
 
       await Conversation.update(
         {
-          last_message: text,
-          last_message_time: Date.now(),
-          last_message_type: "text",
-          lastmessageby: senderName,
+          last_message: content,
+          last_message_time: created_at,
+          last_message_type: type,
+          lastmessageby: sender_name,
           unread: false,
         },
         {
-          where: { id: conversationId },
+          where: { id: conversation_id },
         }
       );
       res.status(200).json(savedMessage);
@@ -167,34 +128,24 @@ router.post("/", async (req, res) => {
       });
     }
   }
-  // event for other operators to get this reply
-  // io.emit("oMessage", {
-  //   senderId,
-  //   receiverId,
-  //   text,
-  // });
-
-  // save the conversation in db
 });
 
 // This needs imporvement in cleaning the data and sending the response to client
 // Operator sends a template to users from csv file
 router.post("/numbers", async (req, res) => {
-  const { array, template, senderId, senderName } = req.body;
+  const { array, template, user_id, sender_name } = req.body;
   const url = `https://graph.facebook.com/v14.0/107287895522530/messages`;
   const token = `Bearer ${process.env.WA_ACCESS_TOKEN}`;
-  console.log(req.body);
   const cleanedData = array.filter((item) => item.Number && item.Name);
   const result = await Promise.all(
     cleanedData.map(async (item) => {
-      const receiverId = item.Number.replace("\r", "");
+      const receiver_id = item.Number.replace("\r", "");
       const body = {
         messaging_product: "whatsapp",
-        to: receiverId,
+        to: receiver_id,
         type: "template",
         template: { name: template, language: { code: "en_US" } },
       };
-      // can use promise.all here
       try {
         //send the (template) message to customer
         const result = await axios.post(url, JSON.stringify(body), {
@@ -203,33 +154,33 @@ router.post("/numbers", async (req, res) => {
 
         //save the conversation in db
         // console.log("result.data.messages[0].id", result.data.messages[0].id);
-        // const convo = await Conversation.exists({ id: receiverId });
+        // const convo = await Conversation.exists({ id: receiver_id });
         // if (!convo) {
         //   await Conversation.create({
-        //     id: receiverId,
+        //     id: receiver_id,
         //     last_message: template,
         //     last_message_time: Date.now(),
         //     last_message_type: "template",
-        //     members: [senderId],
+        //     members: [user_id],
         //   });
         // }
-        // console.log("Conversation created", receiverId);
+        // console.log("Conversation created", receiver_id);
         // const messages = await Message.create({
-        //   conversationId: receiverId,
-        //   senderId,
-        //   senderName,
+        //   conversationId: receiver_id,
+        //   user_id,
+        //   sender_name,
         //   text: template,
         //   id: result.data.messages[0].id,
         // });
 
         // res.sendStatus(200);
-        console.log("Message sent successfully to: ", receiverId);
-        return receiverId;
+        console.log("Message sent successfully to: ", receiver_id);
+        return receiver_id;
       } catch (error) {
         // console.log(error);
-        console.log("Message unsuccessful to: ", receiverId);
+        console.log("Message unsuccessful to: ", receiver_id);
         // res.status(500).json({ error: "Something went wrong" });
-        return receiverId;
+        return receiver_id;
       }
     })
   );

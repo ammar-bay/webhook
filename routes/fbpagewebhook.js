@@ -60,40 +60,18 @@ const FacebookWebhookRouter = (io) => {
           // res.sendStatus(200);
           return;
         }
-        const message = {
-          conversationId: value?.sender?.id,
-          senderId: value?.sender?.id,
-          // senderName: "",
-          id: value?.message?.mid,
-          text: value?.message?.text,
-          type: "text",
-        };
-        // console.log(message);
-
-        io.emit("waMessage", {
-          ...message,
-          platform: "messenger",
-          createdAt: Date.now(),
-        });
 
         try {
-          await Message.create({
-            conversation_id: value?.sender?.id,
-            user_id: value?.sender?.id,
-            mid: value?.message?.mid,
-            type: "text",
-            content: value?.message?.text,
-          });
           const result = await Conversation.findOne({
             where: { id: value?.sender?.id },
           });
+          let username = "";
           if (!result) {
-            let username = "";
             try {
               const userdetails = await axios.get(
                 `https://graph.facebook.com/v2.6/${value?.sender?.id}?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`
               );
-              console.log(userdetails);
+              // console.log(userdetails);
               username =
                 userdetails?.data?.first_name +
                 " " +
@@ -110,27 +88,48 @@ const FacebookWebhookRouter = (io) => {
                 ? value?.message?.text
                 : "Image",
               last_message_time: Date.now(),
-              // lastmessageby: "customer",
+              last_message_by: "customer",
               unread: true,
               platform: "messenger",
             };
             await Conversation.create(conversation);
           } else {
+            username = result.name;
             await Conversation.update(
               {
-                // $set: {
-                  last_message: value?.message?.text
-                    ? value?.message?.text
-                    : "Image",
-                  last_message_time: Date.now(),
-                  last_message_type: value?.message?.text ? "text" : "image",
-                  // lastmessageby: "customer",
-                  unread: true,
-                // },
+                last_message: value?.message?.text
+                  ? value?.message?.text
+                  : "Image",
+                last_message_time: Date.now(),
+                last_message_type: value?.message?.text ? "text" : "image",
+                unread: true,
               },
               { where: { id: value?.sender?.id } }
             );
           }
+          await Message.create({
+            conversation_id: value?.sender?.id,
+            user_id: value?.sender?.id,
+            mid: value?.message?.mid,
+            type: "text",
+            content: value?.message?.text,
+            sender_name: username,
+            created_at: Date.now(),
+          });
+          const message = {
+            conversation_id: value?.sender?.id,
+            user_id: null,
+            senderName: username,
+            id: value?.message?.mid,
+            text: value?.message?.text,
+            type: "text",
+          };
+          io.emit("waMessage", {
+            ...message,
+            platform: "messenger",
+            createdAt: Date.now(),
+          });
+
           res.sendStatus(200);
         } catch (error) {
           console.log("Error in WA Message request");
