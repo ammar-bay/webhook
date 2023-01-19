@@ -46,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       //   allowNull: true,
       //   defaultValue: DataTypes.NOW,
       // },
+      
     },
     {}
   );
