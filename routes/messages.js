@@ -104,6 +104,7 @@ router.post("/", async (req, res) => {
         conversation_id,
         user_id,
         type,
+        sender_name,
         content,
         mid: result.data.messages[0].id,
         created_at,
