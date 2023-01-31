@@ -64,7 +64,7 @@ router.post("/", async (req, res) => {
 
       await Conversation.update(
         {
-          last_message: text,
+          last_message: type === "text" ? content : "Image",
           last_message_time: Date.now(),
           last_message_type: type,
           last_message_by: sender_name,
