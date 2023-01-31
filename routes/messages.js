@@ -41,7 +41,7 @@ router.post("/", async (req, res) => {
         id: conversation_id,
       },
       message: {
-        content,
+        text: content,
       },
     };
     try {
