@@ -111,7 +111,7 @@ const FacebookWebhookRouter = (io) => {
           }
           await Message.create({
             conversation_id: value?.sender?.id,
-            user_id: value?.sender?.id,
+            user_id: null,
             sender_name: username,
             mid: value?.message?.mid,
             type: "text",
