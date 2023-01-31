@@ -45,7 +45,7 @@ const FacebookWebhookRouter = (io) => {
       ) {
         console.log("Facebook Messenger");
         const value = req.body.entry[0].messaging[0];
-        console.log(value);
+        // console.log(value);
         if (value.sender.id === "105647745661703") {
           console.log("SENDER WAS PAGE IT SELF");
           // await Message.updateOne(
@@ -72,7 +72,7 @@ const FacebookWebhookRouter = (io) => {
               const userdetails = await axios.get(
                 `https://graph.facebook.com/v2.6/${value?.sender?.id}?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`
               );
-              console.log(userdetails);
+              // console.log(userdetails);
               username =
                 userdetails?.data?.first_name +
                 " " +
@@ -135,12 +135,12 @@ const FacebookWebhookRouter = (io) => {
           res.sendStatus(200);
         } catch (error) {
           console.log("Error in Messenger Message request");
-          console.log(error);
+          // console.log(error);
           res.sendStatus(500);
         }
       } else {
         console.log("Could Match from Facebook Page Webhook");
-        console.log(JSON.stringify(req.body));
+        // console.log(JSON.stringify(req.body));
         res.sendStatus(200);
       }
     } else {
