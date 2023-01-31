@@ -22,7 +22,6 @@ if (config.use_env_variable) {
     config
   );
 }
-
 fs.readdirSync(__dirname)
   .filter((file) => {
     return (

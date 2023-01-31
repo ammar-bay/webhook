@@ -7,7 +7,6 @@ const axios = require("axios");
 //new conv
 const ConversationRouter = (io) => {
   const router = require("express").Router();
-
   //get all conversations
   router.get("/", async (req, res) => {
     try {
