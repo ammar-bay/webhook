@@ -31,7 +31,7 @@ router.get("/:conversation_id", async (req, res) => {
 router.post("/", async (req, res) => {
   console.log("Post message route");
   const { user_id, conversation_id, content, sender_name, type, created_at } =
-    // req.body;
+    req.body;
   console.log(JSON.stringify(req.body));
   if (req.body.platform === "messenger") {
     console.log("Messenger");
