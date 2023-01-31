@@ -67,11 +67,12 @@ const FacebookWebhookRouter = (io) => {
           });
           let username = "";
           if (!result) {
+            console.log("Conversation not found");
             try {
               const userdetails = await axios.get(
                 `https://graph.facebook.com/v2.6/${value?.sender?.id}?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`
               );
-              // console.log(userdetails);
+              console.log(userdetails);
               username =
                 userdetails?.data?.first_name +
                 " " +
@@ -94,6 +95,7 @@ const FacebookWebhookRouter = (io) => {
             };
             await Conversation.create(conversation);
           } else {
+            console.log("Conversation found");
             username = result.name;
             await Conversation.update(
               {
@@ -110,30 +112,30 @@ const FacebookWebhookRouter = (io) => {
           await Message.create({
             conversation_id: value?.sender?.id,
             user_id: value?.sender?.id,
+            sender_name: username,
             mid: value?.message?.mid,
             type: "text",
             content: value?.message?.text,
-            sender_name: username,
             created_at: Date.now(),
           });
           const message = {
             conversation_id: value?.sender?.id,
             user_id: null,
-            senderName: username,
-            id: value?.message?.mid,
-            text: value?.message?.text,
+            sender_name: username,
+            mid: value?.message?.mid,
+            content: value?.message?.text,
             type: "text",
           };
           io.emit("waMessage", {
             ...message,
             platform: "messenger",
-            createdAt: Date.now(),
+            created_at: Date.now(),
           });
 
           res.sendStatus(200);
         } catch (error) {
-          console.log("Error in WA Message request");
-          // console.log(error);
+          console.log("Error in Messenger Message request");
+          console.log(error);
           res.sendStatus(500);
         }
       } else {
