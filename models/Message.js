@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT("medium"),
         allowNull: false,
       },
       status: {
