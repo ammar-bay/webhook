@@ -3,6 +3,7 @@ const db = require("../models");
 const Conversation = db.Conversation;
 const Message = db.Message;
 const User = db.User;
+const Conversation_User = db.Conversation_User;
 const axios = require("axios");
 
 //get all messages of a conversation
@@ -74,6 +75,18 @@ router.post("/", async (req, res) => {
           where: { id: conversation_id },
         }
       );
+
+      const convo_user = await Conversation_User.findOne({
+        where: { conversation_id, user_id },
+      });
+
+      if (!convo_user) {
+        await Conversation_User.create({
+          conversation_id,
+          user_id,
+        });
+      }
+
       res.status(200).json(savedMessage);
     } catch (error) {
       console.log("Error occured in the post message route");
@@ -123,6 +136,18 @@ router.post("/", async (req, res) => {
           where: { id: conversation_id },
         }
       );
+
+      const convo_user = await Conversation_User.findOne({
+        where: { conversation_id, user_id },
+      });
+
+      if (!convo_user) {
+        await Conversation_User.create({
+          conversation_id,
+          user_id,
+        });
+      }
+
       res.status(200).json(savedMessage);
     } catch (error) {
       console.log("Something went wrong in Whatsapp: ", error);

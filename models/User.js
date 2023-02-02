@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes, db) => {
   const User = sequelize.define(
     "User",
     {
@@ -38,7 +38,8 @@ module.exports = (sequelize, DataTypes) => {
   );
   User.associate = function (models) {
     User.belongsToMany(models.Conversation, {
-      through: "Conversation_User",
+      through: db.Conversation_User,
+      // through: "Conversation_User",
       foreignKey: "user_id",
     });
     User.hasMany(models.Message, {
