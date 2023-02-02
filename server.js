@@ -73,7 +73,6 @@ io.on("connection", (socket) => {
 // };
 
 // connectDB();
-
 //middleware
 app.set("view engine", "ejs");
 app.set(express.urlencoded({ extended: false }));
