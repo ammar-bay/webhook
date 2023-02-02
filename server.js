@@ -59,6 +59,7 @@ io.on("connection", (socket) => {
 //     ? `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatcluster.9mbke.mongodb.net/?retryWrites=true&w=majority`
 //     : `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@unifiedchatprod.9mbke.mongodb.net/?retryWrites=true&w=majority`;
 
+
 // const connectDB = async () => {
 //   try {
 //     await mongoose.connect(DB, {
