@@ -62,7 +62,6 @@ const WhatsappWebhookRouter = (io) => {
         platform: "whatsapp",
       });
       try {
-        Message.create(message);
         const result = await Conversation.findOne({
           where: { id: contacts.wa_id },
         });
@@ -92,6 +91,7 @@ const WhatsappWebhookRouter = (io) => {
             { where: { id: contacts.wa_id } }
           );
         }
+        Message.create(message);
         res.sendStatus(200);
       } catch (error) {
         console.log(error);
