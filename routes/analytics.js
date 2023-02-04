@@ -19,7 +19,6 @@ router.get("/conversation_user/:conversation_id", async (req, res) => {
   }
 });
 
-
 router.get("/conversation_user/:user_id", async (req, res) => {
   try {
     const conversation_user = await Conversation_User.findAll();
