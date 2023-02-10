@@ -49,6 +49,7 @@ const ConversationRouter = (io) => {
         });
         // create entry into the conversation_user table with conversaton_id: receiverId and user_id: senderId
         console.log("Conversation created", receiver_id);
+
       }
       const message = await Message.create({
         conversation_id: receiver_id,

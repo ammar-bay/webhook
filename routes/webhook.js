@@ -78,6 +78,19 @@ const WhatsappWebhookRouter = (io) => {
             unread: true,
           };
           await Conversation.create(conversation);
+          try {
+            const crm = await axios.post(
+              "https://uu7n3qxsw6.execute-api.us-east-2.amazonaws.com/dev/ucnewusers",
+              {
+                customer_name: contacts.profile.name,
+                customer_contact_number: contacts.wa_id,
+                // "sales_agent_name" : "",
+                source_of_lead: "WhatsApp",
+              }
+            );
+          } catch (error) {
+            console.log("Error occured in the CRM api call");
+          }
         } else {
           await Conversation.update(
             {

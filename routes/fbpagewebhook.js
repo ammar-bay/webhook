@@ -94,6 +94,19 @@ const FacebookWebhookRouter = (io) => {
               platform: "messenger",
             };
             await Conversation.create(conversation);
+            try {
+              const crm = await axios.post(
+                "https://uu7n3qxsw6.execute-api.us-east-2.amazonaws.com/dev/ucnewusers",
+                {
+                  customer_name: username,
+                  customer_contact_number: "",
+                  // "sales_agent_name" : "",
+                  source_of_lead: "Facebook Messenger",
+                }
+              );
+            } catch (error) {
+              console.log("Error occured in the CRM api call");
+            }
           } else {
             console.log("Conversation found");
             username = result.name;
@@ -147,7 +160,6 @@ const FacebookWebhookRouter = (io) => {
       // Return a '404 Not Found' if event is not from a Facebook API
       console.log("Not from Facebook Page Webhook");
       res.sendStatus(404);
-      
     }
   });
 
