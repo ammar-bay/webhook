@@ -110,6 +110,7 @@ app.use("/", rootRoute);
 //   });
 // });
 
+
 db.sequelize.sync().then(() => {
   server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
