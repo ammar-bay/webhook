@@ -3,6 +3,8 @@ const Post = require("../models/Post");
 const User = require("../models/User");
 const axios = require("axios");
 
+
+
 router.get("/", async (req, res) => {
   try {
     const result = await axios.get(
