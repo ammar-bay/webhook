@@ -24,6 +24,7 @@ const PORT = process.env.PORT || 8900;
 
 dotenv.config();
 
+
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
@@ -81,6 +82,7 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
+
 // app.use(cors());
 app.use(credentials);
 app.use(cors(corsOptions));
@@ -109,7 +111,6 @@ app.use("/", rootRoute);
 //     console.log(`Server running on port ${PORT}`);
 //   });
 // });
-
 
 db.sequelize.sync().then(() => {
   server.listen(PORT, () => {

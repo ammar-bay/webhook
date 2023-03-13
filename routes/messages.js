@@ -33,9 +33,8 @@ router.post("/", async (req, res) => {
   console.log("Post message route");
   const { user_id, conversation_id, content, sender_name, type, created_at } =
     req.body;
-  console.log(JSON.stringify(req.body));
+  // console.log(JSON.stringify(req.body));
   if (req.body.platform === "messenger") {
-    console.log("Messenger");
     const url = `https://graph.facebook.com/v15.0/me/messages?access_token=${process.env.FB_PAGE_ACCESS_TOKEN}`;
     const body = {
       recipient: {
